@@ -13,6 +13,7 @@ namespace CineTest
         [TestInitialize]
         public void TestInicializa()
         {
+            SesionRepository.Clean();
             sut = SesionRepository.GetInstance();
         }
 
@@ -32,7 +33,7 @@ namespace CineTest
         public void TestGetInstanceClean()
         {
             SesionRepository secondSut = SesionRepository.GetInstance();
-            sut.Clean();
+            SesionRepository.Clean();
             sut = SesionRepository.GetInstance();
             Assert.AreNotEqual(sut, secondSut);
         }

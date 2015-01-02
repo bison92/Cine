@@ -23,7 +23,7 @@ namespace Cine
             }
         }
 
-        public void Clean()
+        public static void Clean()
         {
             _instance = null;
         }

@@ -15,8 +15,7 @@ namespace CineTest
         [TestInitialize]
         public void TestInicializa()
         {
-            sut = VentaRepository.GetInstance();
-            sut.Clean();
+            VentaRepository.Clean();
             sut = VentaRepository.GetInstance();
         }
 
@@ -37,7 +36,7 @@ namespace CineTest
         public void TestGetInstanceClean()
         {
             VentaRepository secondSut = VentaRepository.GetInstance();
-            sut.Clean();
+            VentaRepository.Clean();
             sut = VentaRepository.GetInstance();
             Assert.AreNotEqual(sut, secondSut);
         }

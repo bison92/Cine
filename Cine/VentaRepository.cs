@@ -27,7 +27,7 @@ namespace Cine
             }
             return _instance;
         }
-        public void Clean()
+        public static void Clean()
         {
             _instance = null;
         }

@@ -33,7 +33,7 @@ namespace CineTest
         public void TestGetInstanceClean()
         {
             SalaRepository secondSut = SalaRepository.GetInstance();
-            sut.Clean();
+            SalaRepository.Clean();
             sut = SalaRepository.GetInstance();
             Assert.AreNotEqual(sut, secondSut);
         }

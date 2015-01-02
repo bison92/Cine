@@ -22,21 +22,16 @@ namespace CineTest
         [TestInitialize]
         public void TestInicializa()
         {
-            
-            _salaRepository = SalaRepository.GetInstance();
-            _salaRepository.Clean();
+            SalaRepository.Clean();
             _salaRepository = SalaRepository.GetInstance();
             _salaService = new SalaService(_salaRepository);
             
-
-            _sesionRepository = SesionRepository.GetInstance();
-            _sesionRepository.Clean();
+            SesionRepository.Clean();
             _sesionRepository = SesionRepository.GetInstance();
             _sesionService = new SesionService(_sesionRepository);
             sutSesion = new SesionController(_sesionService);
 
-            _ventaRepository = VentaRepository.GetInstance();
-            _ventaRepository.Clean();
+            VentaRepository.Clean();
             _ventaRepository = VentaRepository.GetInstance();
             _ventaService = new VentaService(_ventaRepository, _sesionService, _salaService);
             sutVenta = new VentaController(_ventaService);
