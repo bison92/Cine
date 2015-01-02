@@ -36,10 +36,6 @@ namespace Cine
             }
             return resultado;
         }
-        private Sala Create(Sala sala)
-        {
-            return Create(sala.Id, sala.Aforo);
-        }
         private Sala Create(long id, int nButacas)
         {
             Sala nuevaSala = new Sala(id, nButacas);

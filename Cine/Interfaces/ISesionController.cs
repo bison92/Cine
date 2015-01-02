@@ -7,10 +7,8 @@ using System.Threading.Tasks;
 namespace Cine.Interfaces
 {
     public interface ISesionController
-    {
-        Sesion Cerrar(Sesion sesion);
+    {       
         Sesion Cerrar(long id);
-        Sesion Abrir(Sesion sesion);
         Sesion Abrir(long id);
     }
 }

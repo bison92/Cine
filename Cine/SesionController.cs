@@ -9,20 +9,10 @@ namespace Cine
         {
             _sesionService = sesionService;
         }
-        public Sesion Cerrar(Sesion sesion)
-        {
-            return this.Cerrar(sesion.Id);
-        }
 
         public Sesion Cerrar(long id)
         {
             return _sesionService.Cerrar(id);
-        }
-
-
-        public Sesion Abrir(Sesion sesion)
-        {
-            return this.Abrir(sesion.Id);
         }
 
         public Sesion Abrir(long id)

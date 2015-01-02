@@ -23,7 +23,7 @@ namespace Cine
         public Venta Create(Venta venta)
         {
             // Chequea que la sesión está abierta
-            Sesion sesion = LeeSesionYThrowExceptionSiSesionCerrada(venta.SesionId, "crear");
+            Sesion sesion = SesionAbierta(venta.SesionId, "crear");
             // Chequea que hay suficiente aforo
             if (!HaySuficientesButacas(sesion, venta))
             {
@@ -48,7 +48,7 @@ namespace Cine
         {
             string action = "cambiar";
             Venta antiguosDatos = LeeVentaYThrowExceptionSiVentaNoExiste(venta.Id, action);
-            Sesion sesion = LeeSesionYThrowExceptionSiSesionCerrada(venta.SesionId, action);
+            Sesion sesion = SesionAbierta(venta.SesionId, action);
             if (!HaySuficientesButacas(sesion, venta, antiguosDatos))
             {
                 Logger.Log(String.Format("Se ha intentado cambiar {0} por {1} entradas ,"
@@ -63,7 +63,7 @@ namespace Cine
         {
             string action = "devolver";
             Venta venta = LeeVentaYThrowExceptionSiVentaNoExiste(id, action);
-            LeeSesionYThrowExceptionSiSesionCerrada(venta.SesionId, action);
+            SesionAbierta(venta.SesionId, action);
             return _ventaRepository.Delete(id);
         }
         public bool HaySuficientesButacas(Sesion sesion, Venta venta, Venta antiguaVenta = null)
@@ -163,7 +163,7 @@ namespace Cine
         /// <param name="action">La acción para el Log</param>
         /// <returns>La sesión en caso de obtenerla</returns>
         /// <exception>SesionCerradaException</exception>
-        private Sesion LeeSesionYThrowExceptionSiSesionCerrada(long sesionId, string action)
+        private Sesion SesionAbierta(long sesionId, string action)
         {
             Sesion sesion = _sesionService.Read(sesionId);
             if (!sesion.EstaAbierta)
