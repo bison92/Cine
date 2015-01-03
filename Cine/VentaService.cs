@@ -37,7 +37,8 @@ namespace Cine
 
         public Venta Read(long id)
         {
-            Venta venta = IntentaLeerVenta(id, "leer");
+            Venta venta = _ventaRepository.Read(id);
+            CompruebaVentaExiste(venta, "leer");
             return venta;
         }
         public IDictionary<long, Venta> List()
@@ -48,7 +49,8 @@ namespace Cine
         public Venta Update(Venta venta)
         {
             string action = "cambiar";
-            Venta antiguosDatos = IntentaLeerVenta(venta.Id, action);
+            Venta antiguosDatos = _ventaRepository.Read(venta.Id);
+            CompruebaVentaExiste(antiguosDatos, action);
             Sesion sesion = _sesionService.Read(venta.SesionId);
             CompruebaSesionAbierta(sesion, action);
             if (!HaySuficientesButacas(sesion, venta, antiguosDatos))
@@ -64,7 +66,8 @@ namespace Cine
         public Venta Delete(long id)
         {
             string action = "devolver";
-            Venta venta = IntentaLeerVenta(id, action);
+            Venta venta = _ventaRepository.Read(id);
+            CompruebaVentaExiste(venta, action);
             Sesion sesion = _sesionService.Read(venta.SesionId);
             CompruebaSesionAbierta(sesion, action);
             return _ventaRepository.Delete(id);
@@ -176,13 +179,13 @@ namespace Cine
         /// <param name="action">La acción para el Log</param>
         /// <returns>La venta en caso de obtenerla</returns>
         /// <exception>VentaException</exception>
-        private Venta IntentaLeerVenta(long id, string action)
+        private Venta CompruebaVentaExiste(Venta venta, string action)
         {
-            Venta venta = _ventaRepository.Read(id);
+            
             if (venta == null)
             {
-                Logger.Log(String.Format("Se ha intentado {0} una venta con id {1} que no existe, se lanza VentaException.", action, id));
-                throw new VentaException(id);
+                Logger.Log(String.Format("Se ha intentado {0} una venta con id que no existe, se lanza VentaException.", action));
+                throw new VentaException();
             }
             return venta;
         }
