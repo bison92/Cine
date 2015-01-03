@@ -22,8 +22,9 @@ namespace Cine
 
         public Venta Create(Venta venta)
         {
+            Sesion sesion = _sesionService.Read(venta.SesionId);
             // Chequea que la sesión está abierta
-            Sesion sesion = SesionAbierta(venta.SesionId, "crear");
+            CompruebaSesionAbierta(sesion, "crear");
             // Chequea que hay suficiente aforo
             if (!HaySuficientesButacas(sesion, venta))
             {
@@ -36,7 +37,7 @@ namespace Cine
 
         public Venta Read(long id)
         {
-            Venta venta = LeeVentaYThrowExceptionSiVentaNoExiste(id, "leer");
+            Venta venta = IntentaLeerVenta(id, "leer");
             return venta;
         }
         public IDictionary<long, Venta> List()
@@ -47,8 +48,9 @@ namespace Cine
         public Venta Update(Venta venta)
         {
             string action = "cambiar";
-            Venta antiguosDatos = LeeVentaYThrowExceptionSiVentaNoExiste(venta.Id, action);
-            Sesion sesion = SesionAbierta(venta.SesionId, action);
+            Venta antiguosDatos = IntentaLeerVenta(venta.Id, action);
+            Sesion sesion = _sesionService.Read(venta.SesionId);
+            CompruebaSesionAbierta(sesion, action);
             if (!HaySuficientesButacas(sesion, venta, antiguosDatos))
             {
                 Logger.Log(String.Format("Se ha intentado cambiar {0} por {1} entradas ,"
@@ -62,8 +64,9 @@ namespace Cine
         public Venta Delete(long id)
         {
             string action = "devolver";
-            Venta venta = LeeVentaYThrowExceptionSiVentaNoExiste(id, action);
-            SesionAbierta(venta.SesionId, action);
+            Venta venta = IntentaLeerVenta(id, action);
+            Sesion sesion = _sesionService.Read(venta.SesionId);
+            CompruebaSesionAbierta(sesion, action);
             return _ventaRepository.Delete(id);
         }
         public bool HaySuficientesButacas(Sesion sesion, Venta venta, Venta antiguaVenta = null)
@@ -126,10 +129,7 @@ namespace Cine
             {
                 diccionario = _ventaRepository.List(idSesion);
             }
-            foreach (var pareja in diccionario)
-            {
-                total += pareja.Value.TotalVenta;
-            }
+            total = diccionario.Sum<KeyValuePair<long,Venta>>((venta) => (venta.Value.TotalVenta));
             return total;
         }
 
@@ -150,28 +150,24 @@ namespace Cine
             {
                 diccionario = _ventaRepository.List(idSesion);
             }
-            foreach (var pareja in diccionario)
-            {
-                entradas += pareja.Value.NumeroEntradas;
-            }
+            entradas = diccionario.Sum<KeyValuePair<long, Venta>>((venta) => (venta.Value.NumeroEntradas));
             return entradas;
         }
         /// <summary>
-        /// Intenta obtener la sesión del repositorio de sesiones, lanza una excepción si no existe.
+        /// Comprueba que la sesión está abierta, lanza una excepción si no es así.
         /// </summary>
-        /// <param name="sesionId">El id de sesión</param>
-        /// <param name="action">La acción para el Log</param>
+        /// <param name="sesionId">la sesión a comprobar</param>
+        /// <param name="action">La acción que estamos realizando con la venta para el Log</param>
         /// <returns>La sesión en caso de obtenerla</returns>
         /// <exception>SesionCerradaException</exception>
-        private Sesion SesionAbierta(long sesionId, string action)
+        private bool CompruebaSesionAbierta(Sesion sesion, string action)
         {
-            Sesion sesion = _sesionService.Read(sesionId);
             if (!sesion.EstaAbierta)
             {
                 Logger.Log(String.Format("Se ha intentado {0} la venta, pero la correspondiente sesión {1} ya está cerrada, se lanza SesionCerradaException.", action, sesion.Id)); 
                 throw new SesionExceptionCerrada(sesion.Id);
             }
-            return sesion;
+            return true;
         }
         /// <summary>
         /// Intenta obtener la venta del repositorio de ventas, lanza una excepción si no existe.
@@ -180,7 +176,7 @@ namespace Cine
         /// <param name="action">La acción para el Log</param>
         /// <returns>La venta en caso de obtenerla</returns>
         /// <exception>VentaException</exception>
-        private Venta LeeVentaYThrowExceptionSiVentaNoExiste(long id, string action)
+        private Venta IntentaLeerVenta(long id, string action)
         {
             Venta venta = _ventaRepository.Read(id);
             if (venta == null)

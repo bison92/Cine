@@ -202,6 +202,16 @@ namespace CineTest
             VerifyRepoList(1);
         }
         [TestMethod]
+        public void TestHaySuficientesButacasDevolucionCambioDeSesionCorrecto()
+        {
+            SetupSalaRead();
+            SetupRepoListFull();
+            bool isEnough = sut.HaySuficientesButacas(new Sesion(1,1,"15:00"), new Venta(1,10), new Venta(2, 20));
+            Assert.IsFalse(isEnough, "No queda espacio en la sala, pero se esta restando de otra sala.");
+            VerifySalaRead(1);
+            VerifyRepoList(1);
+        }
+        [TestMethod]
         public void TestHaySuficientesButacasNoHayDevolucion()
         {
             SetupSalaRead();
