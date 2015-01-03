@@ -24,7 +24,7 @@ namespace Cine
         {
             Sesion sesion = _sesionService.Read(venta.SesionId);
             // Chequea que la sesión está abierta
-            CompruebaSesionAbierta(sesion, "crear");
+            CompruebaSesionAbierta(sesion, "crear"); // throws exception
             // Chequea que hay suficiente aforo
             if (!HaySuficientesButacas(sesion, venta))
             {
@@ -38,7 +38,7 @@ namespace Cine
         public Venta Read(long id)
         {
             Venta venta = _ventaRepository.Read(id);
-            CompruebaVentaExiste(venta, "leer");
+            CompruebaVentaExiste(venta, "leer"); // throws exception
             return venta;
         }
         public IDictionary<long, Venta> List()
@@ -50,9 +50,9 @@ namespace Cine
         {
             string action = "cambiar";
             Venta antiguosDatos = _ventaRepository.Read(venta.Id);
-            CompruebaVentaExiste(antiguosDatos, action);
+            CompruebaVentaExiste(antiguosDatos, action); // throws exception
             Sesion sesion = _sesionService.Read(venta.SesionId);
-            CompruebaSesionAbierta(sesion, action);
+            CompruebaSesionAbierta(sesion, action); // throws exception
             if (!HaySuficientesButacas(sesion, venta, antiguosDatos))
             {
                 Logger.Log(String.Format("Se ha intentado cambiar {0} por {1} entradas ,"
@@ -67,9 +67,9 @@ namespace Cine
         {
             string action = "devolver";
             Venta venta = _ventaRepository.Read(id);
-            CompruebaVentaExiste(venta, action);
+            CompruebaVentaExiste(venta, action); // throws exception
             Sesion sesion = _sesionService.Read(venta.SesionId);
-            CompruebaSesionAbierta(sesion, action);
+            CompruebaSesionAbierta(sesion, action); // throws exception
             return _ventaRepository.Delete(id);
         }
         public bool HaySuficientesButacas(Sesion sesion, Venta venta, Venta antiguaVenta = null)
@@ -181,7 +181,6 @@ namespace Cine
         /// <exception>VentaException</exception>
         private Venta CompruebaVentaExiste(Venta venta, string action)
         {
-            
             if (venta == null)
             {
                 Logger.Log(String.Format("Se ha intentado {0} una venta con id que no existe, se lanza VentaException.", action));
