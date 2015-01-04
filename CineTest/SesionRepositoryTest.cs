@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Cine;
 using System.Collections.Generic;
+using System.Data.Entity;
 
 namespace CineTest
 {
@@ -9,11 +10,22 @@ namespace CineTest
     public class SesionRepositoryTest
     {
         private SesionRepository sut;
+        private CineDB context;
+        private DbContextTransaction transaction;
 
         [TestInitialize]
         public void TestInicializa()
         {
-            sut = new SesionRepository();
+            context = new CineDB();
+            transaction = context.Database.BeginTransaction();
+            sut = new SesionRepository(context);
+        }
+        [TestCleanup]
+        public void TestCleanUp()
+        {
+            transaction.Rollback();
+            transaction.Dispose();
+            context.Dispose();
         }
         [TestMethod]
         public void TestRead()

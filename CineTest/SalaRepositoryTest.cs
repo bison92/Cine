@@ -14,9 +14,10 @@ namespace CineTest
         [TestInitialize]
         public void TestInicializa()
         {
-            sut = new SalaRepository();
+           
             ctx = new CineDB();
             transaction = ctx.Database.BeginTransaction();
+            sut = new SalaRepository(ctx);
         }
         [TestCleanup]
         public void TestFinaliza()
