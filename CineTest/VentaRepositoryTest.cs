@@ -14,32 +14,14 @@ namespace CineTest
     public class VentaRepositoryTest
     {
         private VentaRepository sut;
-        private static CineDB context;
-        private static DbContextTransaction transaction;
+        private CineDB context;
+        private DbContextTransaction transaction;
 
         [TestInitialize]
         public void TestInicializa()
         {
             context = new CineDB();
             transaction = context.Database.BeginTransaction();
-            context.Ventas.Add(new Venta(1, 4));
-            context.Ventas.Add(new Venta(1, 10));
-            context.Ventas.Add(new Venta(2, 4));
-            context.Ventas.Add(new Venta(2, 10));
-            context.Ventas.Add(new Venta(3, 4));
-            context.Ventas.Add(new Venta(3, 10));
-            context.Ventas.Add(new Venta(4, 4));
-            context.Ventas.Add(new Venta(4, 10));
-            context.Ventas.Add(new Venta(5, 4));
-            context.Ventas.Add(new Venta(5, 10));
-            context.Ventas.Add(new Venta(6, 4));
-            context.Ventas.Add(new Venta(6, 10));
-            context.Ventas.Add(new Venta(7, 4));
-            context.Ventas.Add(new Venta(7, 10));
-            context.Ventas.Add(new Venta(8, 4));
-            context.Ventas.Add(new Venta(8, 10));
-            context.Ventas.Add(new Venta(9, 4));
-            context.Ventas.Add(new Venta(9, 10));
             sut = new VentaRepository(context);
         }
         [TestCleanup]
@@ -52,18 +34,18 @@ namespace CineTest
         [TestMethod]
         public void TestCreate()
         {
-            Venta venta = new Venta(1, 10);
-            Venta res = sut.Create(venta);
-            Assert.AreEqual(19, res.Id);
+            int ventas = sut.List().Count;
+            Venta res = sut.Create(new Venta(1, 10));
+            Assert.AreEqual(ventas+1, sut.List().Count);
         }
 
         [TestMethod]
         public void TestRead()
         {
-            Venta res = sut.Read(1);
-            Venta res2 = sut.Read(2);
-            Assert.AreEqual(1, res.Id);
-            Assert.AreEqual(2, res2.Id);
+            Venta cr = sut.Create(new Venta(1, 10)); // unit guarro testing?
+            Venta res = sut.Read(cr.Id);
+            Assert.AreEqual(cr.Id, res.Id);
+            Assert.AreEqual(10, res.NumeroEntradas);
         }
 
         [TestMethod]
@@ -76,8 +58,10 @@ namespace CineTest
         [TestMethod]
         public void TestList()
         {
+            sut.Create(new Venta(1, 20));
+            sut.Create(new Venta(1, 20));
             IDictionary<long, Venta> res = sut.List();
-            Assert.AreEqual(18, res.Count);
+            Assert.AreEqual(2, res.Count);
         }
 
         [TestMethod]
@@ -85,6 +69,8 @@ namespace CineTest
         {
             for (int i = 0; i < Constantes.Sesiones.Length; i++)
             {
+                sut.Create(new Venta(Constantes.Sesiones[i], 10));
+                sut.Create(new Venta(Constantes.Sesiones[i], 10));
                 IDictionary<long, Venta> resSesion = sut.List(Constantes.Sesiones[i]);
                 Assert.AreEqual(2, resSesion.Count);
                 foreach (var pareja in resSesion)
@@ -105,13 +91,14 @@ namespace CineTest
 
         [TestMethod]
         public void TestUpdate()
-        {         
+        {
+            Venta noVinculado = new Venta(1, 20);
+            Venta cr = sut.Create(new Venta(1,20));
             Venta ventaAActualizar = new Venta(1, 10);
-            ventaAActualizar.Id = 1;
-            Venta antigua = sut.Read(1);
+            ventaAActualizar.Id = cr.Id;
             Venta actualizada = sut.Update(ventaAActualizar);
             Assert.AreEqual(10, actualizada.NumeroEntradas);
-            Assert.AreNotEqual(antigua.NumeroEntradas, actualizada.NumeroEntradas);
+            Assert.AreNotEqual(noVinculado.NumeroEntradas, actualizada.NumeroEntradas);
         }
 
         [TestMethod]
@@ -126,33 +113,12 @@ namespace CineTest
         [TestMethod]
         public void TestDelete()
         {
-            Venta venta = sut.Read(1);
-            Venta ventaBorrada = sut.Delete(1);
-            Assert.IsTrue(_ventasIguales(venta, ventaBorrada));
-            venta = sut.Read(1);
-            Assert.IsNull(venta);
+            Venta cr = sut.Create(new Venta(1, 20));
+            Venta ventaBorrada = sut.Delete(cr.Id);
+            Assert.AreEqual(cr, ventaBorrada);
+            cr = sut.Read(1);
+            Assert.IsNull(cr);
         }
-
-        private bool _ventasIguales(Venta venta, Venta ventaBorrada)
-        {
-            bool iguales = true;
-            if (venta.AppliedDiscount != ventaBorrada.AppliedDiscount)
-                iguales = false;
-            if (venta.DiferenciaDevolucion != ventaBorrada.DiferenciaDevolucion)
-                iguales = false;
-            if (venta.Id != ventaBorrada.Id)
-                iguales = false;
-            if (venta.NumeroEntradas != ventaBorrada.NumeroEntradas)
-                iguales = false;
-            if (venta.PrecioEntrada != ventaBorrada.PrecioEntrada)
-                iguales = false;
-            if (venta.SesionId != ventaBorrada.SesionId)
-                iguales = false;
-            if (venta.TotalVenta != ventaBorrada.TotalVenta)
-                iguales = false;
-            return iguales;
-        }
-
         [TestMethod]
         public void TestDeleteNoExisteVenta()
         {
