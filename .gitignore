@@ -4,3 +4,4 @@ TestResults
 CineTest/bin
 CineTest/obj
 packages/Moq*
+packages/EntityFramework*

@@ -1,4 +1,5 @@
 ﻿using Cine.Interfaces;
+using Cine.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,52 +10,40 @@ namespace Cine
 {
     public class VentaRepository : IVentaRepository
     {
-        private Dictionary<long, Venta> _almacenVentas;
-        private Dictionary<long, Venta> _almacenDevoluciones;
-        private long _idAuto;
-        private static VentaRepository _instance = null;
-        private VentaRepository()
+        public VentaRepository()
         {
-            _almacenVentas = new Dictionary<long, Venta>();
-            _idAuto = 1; // Id Auto incremental para las nuevas ventas
-            _almacenDevoluciones = new Dictionary<long, Venta>();
-        }
-        public static VentaRepository GetInstance()
-        {
-            if (_instance == null)
-            {
-                _instance = new VentaRepository();
-            }
-            return _instance;
-        }
-        public static void Clean()
-        {
-            _instance = null;
         }
         public Venta Create(Venta venta)
         {
-            venta.Id = _idAuto++;
-            _almacenVentas.Add(venta.Id, venta);
-            return venta;
+            Venta nueva = new Venta();
+            using (var ctx = new CineDB())
+            {
+                nueva = ctx.Ventas.Add(venta);
+                ctx.SaveChanges();
+            }
+            return nueva;
         }
 
         public Venta Read(long id)
         {
             Venta venta = null;
-            if (_almacenVentas.ContainsKey(id))
+            using (var ctx = new CineDB())
             {
-                venta = _almacenVentas[id];
+                venta = ctx.Ventas.Find(id);
             }
             return venta;
         }
 
         public IDictionary<long,Venta> List(long sesionId = -1)
         {
-            
-            IEnumerable<KeyValuePair<long, Venta>> subconjunto = _almacenVentas.AsEnumerable<KeyValuePair<long, Venta>>();
-            if (sesionId != -1)
+
+            IEnumerable<KeyValuePair<long, Venta>> subconjunto;
+            using (var ctx = new CineDB())
             {
-                subconjunto = subconjunto.Where(vKP => vKP.Value.SesionId == sesionId);
+                if (sesionId != -1)
+                    subconjunto = ctx.Ventas.Where<Venta>(v => v.SesionId == sesionId).ToDictionary<Venta, long>(v => v.Id);
+                else
+                    subconjunto = ctx.Ventas.ToDictionary<Venta, long>(v => v.Id);
             }
             IDictionary<long, Venta> resultado = subconjunto.Select(vkp => vkp.Value).ToDictionary<Venta, long>(vkp => vkp.Id);
             return resultado;
@@ -63,10 +52,16 @@ namespace Cine
         public Venta Update(Venta venta)
         {
             Venta res = null;
-            if (_almacenVentas.ContainsKey(venta.Id))
+            using (var ctx = new CineDB())
             {
-                _almacenVentas[venta.Id] = venta;
+                res = ctx.Ventas.Find(venta.Id);
+                if (res == null)
+                {
+                    Logger.Log(String.Format("Se ha intentado actualizar una venta con id {0} que no existe, se lanza VentaException.", venta.Id));
+                    throw new VentaException();
+                }
                 res = venta;
+                ctx.SaveChanges();
             }
             return res;
         }
@@ -74,11 +69,13 @@ namespace Cine
         public Venta Delete(long id)
         {
             Venta borrado = null;
-            if (_almacenVentas.ContainsKey(id))
-            {
-                borrado = _almacenVentas[id];
-                _almacenVentas.Remove(id);
-                _almacenDevoluciones.Add(borrado.Id, borrado);
+            using (var ctx = new CineDB()){
+                borrado = ctx.Ventas.Find(id);
+                if (borrado != null)
+                {
+                    ctx.Ventas.Remove(borrado);
+                    ctx.SaveChanges();
+                }
             }
             return borrado;
         }

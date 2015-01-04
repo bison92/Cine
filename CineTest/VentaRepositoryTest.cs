@@ -4,6 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Cine;
 using Moq;
 using System.Collections.Generic;
+using System.Data.Entity;
 
 namespace CineTest
 {
@@ -15,151 +16,205 @@ namespace CineTest
         [TestInitialize]
         public void TestInicializa()
         {
-            VentaRepository.Clean();
-            sut = VentaRepository.GetInstance();
+            sut = new VentaRepository();
         }
-
-        [TestMethod]
-        public void TestGetInstance()
-        {
-            Assert.IsNotNull(sut);
-        }
-
-        [TestMethod]
-        public void TestGetInstanceSingleton()
-        {
-            VentaRepository secondSut = VentaRepository.GetInstance();
-            Assert.AreEqual(sut, secondSut);
-        }
-
-        [TestMethod]
-        public void TestGetInstanceClean()
-        {
-            VentaRepository secondSut = VentaRepository.GetInstance();
-            VentaRepository.Clean();
-            sut = VentaRepository.GetInstance();
-            Assert.AreNotEqual(sut, secondSut);
-        }
-
         [TestMethod]
         public void TestCreate()
         {
-            Venta venta = new Venta(1, 10);
-            Venta res = sut.Create(venta);
-            Assert.AreEqual(1, res.Id);
+            using (var ctx =  new CineDB()){
+                using(var transaction = ctx.Database.BeginTransaction()){
+                    Venta venta = new Venta(1, 10);
+                    Venta res = sut.Create(venta);
+                    Assert.AreEqual(1, res.Id);
+                    transaction.Rollback();
+                    transaction.Dispose();
+                }
+                ctx.Dispose();
+            }             
         }
 
         [TestMethod]
         public void TestRead()
         {
-            CrearVentas();
-            Venta res = sut.Read(1);
-            Venta res2 = sut.Read(12);
-            Assert.AreEqual(1, res.Id);
-            Assert.AreEqual(12, res2.Id);
+            using (var ctx =  new CineDB())
+            {
+                using(var transaction = ctx.Database.BeginTransaction())
+                {
+                    Venta res = sut.Read(1);
+                    Venta res2 = sut.Read(12);
+                    Assert.AreEqual(1, res.Id);
+                    Assert.AreEqual(12, res2.Id);
+                    transaction.Rollback();
+                    transaction.Dispose();
+                }
+                ctx.Dispose();
+            }
         }
 
         [TestMethod]
         public void TestReadNoExisteVenta()
         {
-            Venta res = sut.Read(1);
-            Assert.IsNull(res);
+            using (var ctx = new CineDB())
+            {
+                using (var transaction = ctx.Database.BeginTransaction())
+                {
+                    Venta res = sut.Read(1);
+                    Assert.IsNull(res);
+                    transaction.Rollback();
+                    transaction.Dispose();
+                }
+                ctx.Dispose();
+            }
         }
 
         [TestMethod]
         public void TestList()
         {
-            CrearVentas();
-            IDictionary<long, Venta> res = sut.List();
-            Assert.AreEqual(18, res.Count);
+            using (var ctx = new CineDB())
+            {
+                using (var transaction = ctx.Database.BeginTransaction())
+                {
+                    IDictionary<long, Venta> res = sut.List();
+                    Assert.AreEqual(18, res.Count);
+                    transaction.Rollback();
+                    transaction.Dispose();
+                }
+                ctx.Dispose();
+            }
         }
 
         [TestMethod]
         public void TestListBySesion()
         {
-            CrearVentas();
-            for (int i = 1; i <= 9; i++)
+            using (var ctx = new CineDB())
             {
-                IDictionary<long, Venta> resSesion = sut.List(i);
-                Assert.AreEqual(2, resSesion.Count);
-                foreach (var pareja in resSesion)
+                using (var transaction = ctx.Database.BeginTransaction())
                 {
-                    Venta venta = pareja.Value;
-                    Assert.AreEqual(i, venta.SesionId);
+                    for (int i = 1; i <= 9; i++)
+                    {
+                        IDictionary<long, Venta> resSesion = sut.List(i);
+                        Assert.AreEqual(2, resSesion.Count);
+                        foreach (var pareja in resSesion)
+                        {
+                            Venta venta = pareja.Value;
+                            Assert.AreEqual(i, venta.SesionId);
+                        }
+                    }
+                    transaction.Rollback();
+                    transaction.Dispose();
                 }
+                ctx.Dispose();
             }
         }
         [TestMethod]
         public void TestListNoHayVentas()
         {
-            IDictionary<long,Venta> res = sut.List();
-            IDictionary<long,Venta> resSesion1 = sut.List(1);
-            Assert.AreEqual(0, res.Count);
-            Assert.AreEqual(0, resSesion1.Count);
+            using (var ctx = new CineDB())
+            {
+                using (var transaction = ctx.Database.BeginTransaction())
+                {
+                    IDictionary<long, Venta> res = sut.List();
+                    IDictionary<long, Venta> resSesion1 = sut.List(1);
+                    Assert.AreEqual(0, res.Count);
+                    Assert.AreEqual(0, resSesion1.Count);
+                    transaction.Rollback();
+                    transaction.Dispose();
+                }
+                ctx.Dispose();
+            }
         }
 
         [TestMethod]
         public void TestUpdate()
         {
-            CrearVentas();
-            Venta ventaAActualizar = new Venta(1, 10);
-            ventaAActualizar.Id = 1;
-            Venta antigua = sut.Read(1);
-            Venta actualizada = sut.Update(ventaAActualizar);
-            Assert.AreEqual(10, actualizada.NumeroEntradas);
-            Assert.AreNotEqual(antigua.NumeroEntradas, actualizada.NumeroEntradas);
+            using (var ctx = new CineDB())
+            {
+                using (var transaction = ctx.Database.BeginTransaction())
+                {
+                    Venta ventaAActualizar = new Venta(1, 10);
+                    ventaAActualizar.Id = 1;
+                    Venta antigua = sut.Read(1);
+                    Venta actualizada = sut.Update(ventaAActualizar);
+                    Assert.AreEqual(10, actualizada.NumeroEntradas);
+                    Assert.AreNotEqual(antigua.NumeroEntradas, actualizada.NumeroEntradas);
+                    transaction.Rollback();
+                    transaction.Dispose();
+                }
+                ctx.Dispose();
+            }
         }
 
         [TestMethod]
         public void TestUpdateNoExisteVenta()
         {
-            Venta ventaAActualizar = new Venta(1, 10);
-            ventaAActualizar.Id = 1;
-            Venta actualizada = sut.Update(ventaAActualizar);
-            Assert.IsNull(actualizada);
+            using (var ctx = new CineDB())
+            {
+                using (var transaction = ctx.Database.BeginTransaction())
+                {
+                    Venta ventaAActualizar = new Venta(1, 10);
+                    ventaAActualizar.Id = 1;
+                    Venta actualizada = sut.Update(ventaAActualizar);
+                    Assert.IsNull(actualizada);
+                    transaction.Rollback();
+                    transaction.Dispose();
+                }
+                ctx.Dispose();
+            }
         }
 
         [TestMethod]
         public void TestDelete()
         {
-            CrearVentas();
-            Venta venta = sut.Read(1);
-            Venta ventaBorrada = sut.Delete(1);
-            Assert.AreEqual(venta, ventaBorrada);
-            venta = sut.Read(1);
-            Assert.IsNull(venta);
+            using (var ctx = new CineDB())
+            {
+                using (var transaction = ctx.Database.BeginTransaction())
+                {
+                    Venta venta = sut.Read(1);
+                    Venta ventaBorrada = sut.Delete(1);
+                    Assert.IsTrue(_ventasIguales(venta, ventaBorrada));
+                    venta = sut.Read(1);
+                    Assert.IsNull(venta);
+                    transaction.Rollback();
+                    transaction.Dispose();
+                }
+                ctx.Dispose();
+            }
+        }
+
+        private bool _ventasIguales(Venta venta, Venta ventaBorrada)
+        {
+            bool iguales = true;
+            if (venta.AppliedDiscount != ventaBorrada.AppliedDiscount)
+                iguales = false;
+            if (venta.DiferenciaDevolucion != ventaBorrada.DiferenciaDevolucion)
+                iguales = false;
+            if (venta.Id != ventaBorrada.Id)
+                iguales = false;
+            if (venta.NumeroEntradas != ventaBorrada.NumeroEntradas)
+                iguales = false;
+            if (venta.PrecioEntrada != ventaBorrada.PrecioEntrada)
+                iguales = false;
+            if (venta.SesionId != ventaBorrada.SesionId)
+                iguales = false;
+            if (venta.TotalVenta != ventaBorrada.TotalVenta)
+                iguales = false;
+            return iguales;
         }
 
         [TestMethod]
         public void TestDeleteNoExisteVenta()
         {
-            Venta venta = sut.Delete(1);
-            Assert.IsNull(venta);
-        }
-
-        private void CrearVentas()
-        {
-            sut.Create(new Venta(1, 2));
-            sut.Create(new Venta(1, 7));
-            sut.Create(new Venta(2, 3));
-            sut.Create(new Venta(2, 4));
-            sut.Create(new Venta(3, 5));
-            sut.Create(new Venta(3, 7));
-
-            sut.Create(new Venta(4, 2));
-            sut.Create(new Venta(4, 7));
-            sut.Create(new Venta(5, 3));
-            sut.Create(new Venta(5, 4));
-            sut.Create(new Venta(6, 5));
-            sut.Create(new Venta(6, 7));
-
-            sut.Create(new Venta(7, 2));
-            sut.Create(new Venta(7, 7));
-            sut.Create(new Venta(8, 3));
-            sut.Create(new Venta(8, 4));
-            sut.Create(new Venta(9, 5));
-            sut.Create(new Venta(9, 7));
-
+            using (var ctx = new CineDB())
+            {
+                using (var transaction = ctx.Database.BeginTransaction())
+                {
+                Venta venta = sut.Delete(1);
+                Assert.IsNull(venta);
+                transaction.Rollback();
+                transaction.Dispose();
+                }
+                ctx.Dispose();
+            }
         }
     }
 }

@@ -1,41 +1,29 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Cine;
 using System.Collections.Generic;
+using System.Data.Entity;
 
 namespace CineTest
 {
     [TestClass]
     public class SalaRepositoryTest
     {
-        private long[] _salas = new long[] { 1, 2, 3 };
         private SalaRepository sut;
-
+        private CineDB ctx;
+        private DbContextTransaction transaction;
         [TestInitialize]
         public void TestInicializa()
         {
-            sut = SalaRepository.GetInstance();
+            sut = new SalaRepository();
+            ctx = new CineDB();
+            transaction = ctx.Database.BeginTransaction();
         }
-
-        [TestMethod]
-        public void TestGetInstance()
+        [TestCleanup]
+        public void TestFinaliza()
         {
-            Assert.IsNotNull(sut);
-        }
-
-        [TestMethod]
-        public void TestGetInstanceSingleton()
-        {
-            SalaRepository secondSut = SalaRepository.GetInstance();
-            Assert.AreEqual(sut, secondSut);
-        }
-
-        [TestMethod]
-        public void TestGetInstanceClean()
-        {
-            SalaRepository secondSut = SalaRepository.GetInstance();
-            SalaRepository.Clean();
-            sut = SalaRepository.GetInstance();
-            Assert.AreNotEqual(sut, secondSut);
+            transaction.Rollback();
+            transaction.Dispose();
+            ctx.Dispose();
         }
         [TestMethod]
         public void TestRead()

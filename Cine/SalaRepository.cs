@@ -5,42 +5,40 @@ namespace Cine
 {
     public class SalaRepository : ISalaRepository
     {
-        private IDictionary<long, Sala> _almacen;
-        private static SalaRepository _instance = null;
-        private SalaRepository()
+        public SalaRepository()
         {
-            _almacen = new Dictionary<long, Sala>();
-            for (int i = 0; i < Constantes.Salas.Length; i++)
-            {
-                Create(Constantes.Salas[i], Constantes.Aforos[i]);
-            }
+           
         }
-        public static SalaRepository GetInstance()
-        {
-            if (_instance == null)
-            {
-                _instance = new SalaRepository();
-            }
-            return _instance;
-        }
-        public static void Clean()
-        {
-            _instance = null;
-        }
+        //public static SalaRepository GetInstance()
+        //{
+        //    if (_instance == null)
+        //    {
+        //        _instance = new SalaRepository();
+        //    }
+        //    return _instance;
+        //}
+        //public static void Clean()
+        //{
+        //    _instance = null;
+        //}
         public Sala Read(long id)
         {
             Sala resultado = null;
-            if (_almacen.ContainsKey(id))
+            using (var context = new CineDB())
             {
-                resultado = _almacen[id];
+                resultado = context.Salas.Find(id);
             }
             return resultado;
         }
         private Sala Create(long id, int nButacas)
         {
-            Sala nuevaSala = new Sala(id, nButacas);
-            _almacen.Add(id, nuevaSala);
-            return nuevaSala;
+            Sala sala = new Sala(id, nButacas);
+            using (var context= new CineDB())
+            {
+                sala = context.Salas.Add(sala);
+                context.SaveChanges();
+            }
+            return sala;
         }
     }
 }

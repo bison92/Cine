@@ -10,55 +10,40 @@ namespace Cine
 {
     public class SesionRepository: ISesionRepository
     {
-        private IDictionary<long, Sesion> _almacen;
-        private static SesionRepository _instance = null;
-        private long _idAuto;
-        private SesionRepository()
+        public SesionRepository()
         {
-            _idAuto = 1;
-            _almacen = new Dictionary<long, Sesion>();
-            for (int i = 0; i < Constantes.Sesiones.Length; i++)
-            {
-                Create(_idAuto++, Constantes.Salas[i % Constantes.Salas.Length], Constantes.Horas[i]);
-            }
         }
 
-        public static void Clean()
+        private Sesion Create(long id, long salaId, string hora)
         {
-            _instance = null;
-        }
-
-        public static SesionRepository GetInstance()
-        {
-            if (_instance == null)
+            Sesion nuevaSesion = new Sesion(id, salaId, hora);
+            using (var ctx = new CineDB())
             {
-                _instance = new SesionRepository();
+                ctx.Sesiones.Add(nuevaSesion);
+                ctx.SaveChanges();
             }
-            return _instance;
+            return nuevaSesion;
         }
 
         public Sesion Read(long id)
         {
             Sesion resultado = null;
-            if(_almacen.ContainsKey(id)){
-                resultado = _almacen[id];
+            using (var ctx = new CineDB())
+            {
+                resultado = ctx.Sesiones.Find(id);
             }
             return resultado;
         }
 
-        private Sesion Create(long id, long salaId, string hora)
-        {
-            Sesion nuevaSesion = new Sesion(id, salaId, hora );
-            _almacen.Add(id, nuevaSesion);
-            return nuevaSesion;
-        }
-
         public IDictionary<long,Sesion> List(long idSala = -1)
         {
-            IEnumerable<KeyValuePair<long, Sesion>> subconjunto = _almacen.AsEnumerable<KeyValuePair<long, Sesion>>();
-            if (idSala != -1)
+            IEnumerable<KeyValuePair<long, Sesion>> subconjunto;
+            using (var ctx = new CineDB())
             {
-                subconjunto = subconjunto.Where(sKP => sKP.Value.SalaId == idSala);
+                if (idSala != -1)
+                    subconjunto = ctx.Sesiones.Where<Sesion>((ses) => (ses.SalaId == idSala)).ToDictionary<Sesion, long>(skp => skp.Id);
+                else
+                    subconjunto = ctx.Sesiones.ToDictionary<Sesion, long>(skp => skp.Id);
             }
             IDictionary<long,Sesion> resultado = subconjunto.Select(sKP => sKP.Value).ToDictionary<Sesion,long>(sKP => sKP.Id);
             return resultado;
@@ -67,16 +52,17 @@ namespace Cine
         public Sesion Update(long id, bool abierta)
         {
             Sesion sesion = null;
-            if(_almacen.ContainsKey(id))
+            using (var ctx = new CineDB())
             {
-                _almacen[id].EstaAbierta = abierta;
-                sesion = _almacen[id];
-            }
-            else
-            {
-                Logger.Log(String.Format("Se ha intentado actualizar una sesion con id {0} que no existe, se lanza SesionException.", id));
-                throw new SesionException(id);
-            }           
+                sesion = ctx.Sesiones.Find(id);
+                if (sesion == null)
+                {
+                    Logger.Log(String.Format("Se ha intentado actualizar una sesion con id {0} que no existe, se lanza SesionException.", id));
+                    throw new SesionException(id);
+                }
+                sesion.EstaAbierta = abierta;
+                ctx.SaveChanges();
+            }       
             return sesion;
         }
     }

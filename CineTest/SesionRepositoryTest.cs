@@ -13,29 +13,7 @@ namespace CineTest
         [TestInitialize]
         public void TestInicializa()
         {
-            SesionRepository.Clean();
-            sut = SesionRepository.GetInstance();
-        }
-
-        [TestMethod]
-        public void TestGetInstance()
-        {
-            Assert.IsNotNull(sut);
-        }
-
-        [TestMethod]
-        public void TestGetInstanceSingleton()
-        {
-            SesionRepository secondSut = SesionRepository.GetInstance();
-            Assert.AreEqual(sut, secondSut);
-        }
-        [TestMethod]
-        public void TestGetInstanceClean()
-        {
-            SesionRepository secondSut = SesionRepository.GetInstance();
-            SesionRepository.Clean();
-            sut = SesionRepository.GetInstance();
-            Assert.AreNotEqual(sut, secondSut);
+            sut = new SesionRepository();
         }
         [TestMethod]
         public void TestRead()
