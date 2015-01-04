@@ -42,11 +42,11 @@ namespace Cine
         public Venta Update(Venta venta)
         {
             //NMCN
-            return this.Update(venta.Id, venta.SesionId, venta.NumeroEntradas);
+            return this.Update(venta.VentaId, venta.SesionId, venta.NumeroEntradas);
         }
         public Venta Update(long id, long sesionId, int numeroEntradas)
         {
-            Venta venta = new Venta { Id = id, SesionId = sesionId, NumeroEntradas = numeroEntradas };
+            Venta venta = new Venta { VentaId = id, SesionId = sesionId, NumeroEntradas = numeroEntradas };
             return _ventaService.Update(venta);
         }
 

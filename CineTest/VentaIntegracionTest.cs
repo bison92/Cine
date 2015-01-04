@@ -33,11 +33,11 @@ namespace CineTest
             _salaService = new SalaService(_salaRepository);
 
             _sesionRepository = new SesionRepository(context);
-            _sesionService = new SesionService(_sesionRepository);
+            _sesionService = new SesionService(_sesionRepository, _salaService);
             sutSesion = new SesionController(_sesionService);
             
             _ventaRepository = new VentaRepository(context);
-            _ventaService = new VentaService(_ventaRepository, _sesionService, _salaService);
+            _ventaService = new VentaService(_ventaRepository, _sesionService);
             sutVenta = new VentaController(_ventaService);
         }
         [TestCleanup]
@@ -64,8 +64,8 @@ namespace CineTest
             //con descuento
             Venta res2 = sutVenta.Create(new Venta(1, 10));
 
-            Assert.AreEqual(1, res1.Id);
-            Assert.AreEqual(2, res2.Id);
+            Assert.AreEqual(1, res1.VentaId);
+            Assert.AreEqual(2, res2.VentaId);
             Assert.AreEqual(28.0d, res1.TotalVenta, 0.01d);
             Assert.AreEqual(63.0d, res2.TotalVenta, 0.01d);
             Assert.AreEqual(7.0d, res1.PrecioEntrada);
@@ -104,11 +104,11 @@ namespace CineTest
             //con descuento
             sutVenta.Create(new Venta(1, 10));
             IList<Venta> listaAntes = sutVenta.List();
-            Venta deleted = sutVenta.Delete(res1.Id);
+            Venta deleted = sutVenta.Delete(res1.VentaId);
             IList<Venta> listaDespues = sutVenta.List();
             Assert.AreNotEqual(listaAntes.Count, listaDespues.Count);
             Assert.AreEqual(listaAntes.Count - 1, listaDespues.Count);
-            sutVenta.Read(deleted.Id);
+            sutVenta.Read(deleted.VentaId);
         }
         [TestMethod]
         [ExpectedException(typeof(SesionExceptionCerrada))]
@@ -134,7 +134,7 @@ namespace CineTest
             sutSesion.Abrir(1);
             Venta res = sutVenta.Create(new Venta(1, 2));
             sutSesion.Cerrar(1);
-            sutVenta.Delete(res.Id);
+            sutVenta.Delete(res.VentaId);
         }
         [TestMethod]
         [ExpectedException(typeof(VentaExceptionNoAforo))]
@@ -177,7 +177,7 @@ namespace CineTest
         [ExpectedException(typeof(VentaException))]
         public void TestVentaUpdateNoExiste()
         {
-           sutVenta.Update(new Venta { Id = 1, SesionId = 1, NumeroEntradas = 10 });
+           sutVenta.Update(new Venta { VentaId = 1, SesionId = 1, NumeroEntradas = 10 });
         }
     }
 }

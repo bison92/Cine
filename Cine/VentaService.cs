@@ -11,13 +11,11 @@ namespace Cine
     {
         private IVentaRepository _ventaRepository;
         private ISesionService _sesionService;
-        private ISalaService _salaService;
 
-        public VentaService(IVentaRepository ventaRepository, ISesionService sesionService, ISalaService salaService)
+        public VentaService(IVentaRepository ventaRepository, ISesionService sesionService)
         {
             _ventaRepository = ventaRepository;
             _sesionService = sesionService;
-            _salaService = salaService;
         }
 
         public Venta Create(Venta venta)
@@ -28,7 +26,7 @@ namespace Cine
             // Chequea que hay suficiente aforo
             if (!HaySuficientesButacas(sesion, venta))
             {
-                Logger.Log(String.Format("Se ha intentado vender {0} entradas, para la sesión {1} y no hay suficiente aforo, se lanza VentaNoAforoException.", venta.NumeroEntradas, sesion.Id));
+                Logger.Log(String.Format("Se ha intentado vender {0} entradas, para la sesión {1} y no hay suficiente aforo, se lanza VentaNoAforoException.", venta.NumeroEntradas, sesion.SesionId));
                 throw new VentaExceptionNoAforo(venta.NumeroEntradas);
             }
             venta = CalculaPrecioYDescuento(venta);
@@ -49,14 +47,14 @@ namespace Cine
         public Venta Update(Venta venta)
         {
             string action = "cambiar";
-            Venta antiguosDatos = _ventaRepository.Read(venta.Id);
+            Venta antiguosDatos = _ventaRepository.Read(venta.VentaId);
             CompruebaVentaExiste(antiguosDatos, action); // throws exception
             Sesion sesion = _sesionService.Read(venta.SesionId);
             CompruebaSesionAbierta(sesion, action); // throws exception
             if (!HaySuficientesButacas(sesion, venta, antiguosDatos))
             {
                 Logger.Log(String.Format("Se ha intentado cambiar {0} por {1} entradas ,"
-                + "para la sesión {2} pero no hay suficiente aforo, se lanza VentaNoAforoException.", antiguosDatos.NumeroEntradas, venta.NumeroEntradas, sesion.Id)); // sonar casca
+                + "para la sesión {2} pero no hay suficiente aforo, se lanza VentaNoAforoException.", antiguosDatos.NumeroEntradas, venta.NumeroEntradas, sesion.SesionId)); // sonar casca
                 throw new VentaExceptionNoAforo(venta.NumeroEntradas);
             }
             venta = CalculaPrecioYDescuento(venta, antiguosDatos);
@@ -87,7 +85,7 @@ namespace Cine
                     butacasVendidas -= antiguaVenta.NumeroEntradas;
                 }
             }
-            Sala sala = _salaService.Read(sesion.SalaId);
+            Sala sala = sesion.Sala;
             int aforo = sala.Aforo;
             return (butacasVendidas + venta.NumeroEntradas) <= aforo;
         }
@@ -124,7 +122,7 @@ namespace Cine
                 IDictionary<long, Sesion> sesionesDeLaSala = _sesionService.List(idSala);
                 foreach (var pareja in sesionesDeLaSala)
                 {
-                    IDictionary<long,Venta> parte = _ventaRepository.List(pareja.Value.Id);
+                    IDictionary<long,Venta> parte = _ventaRepository.List(pareja.Value.SesionId);
                     diccionario = diccionario.Concat(parte).ToDictionary(x => x.Key, x => x.Value);
                 }
             }
@@ -145,7 +143,7 @@ namespace Cine
                 diccionario = new Dictionary<long, Venta>();
                 IDictionary<long, Sesion> sesionesDeLaSala = _sesionService.List(idSala);
                 foreach(var pareja in sesionesDeLaSala){
-                    IDictionary<long, Venta> parte = _ventaRepository.List(pareja.Value.Id);
+                    IDictionary<long, Venta> parte = _ventaRepository.List(pareja.Value.SesionId);
                     diccionario = diccionario.Concat(parte).ToDictionary(x => x.Key, x => x.Value);
                 }
             }
@@ -167,8 +165,8 @@ namespace Cine
         {
             if (!sesion.EstaAbierta)
             {
-                Logger.Log(String.Format("Se ha intentado {0} la venta, pero la correspondiente sesión {1} ya está cerrada, se lanza SesionCerradaException.", action, sesion.Id)); 
-                throw new SesionExceptionCerrada(sesion.Id);
+                Logger.Log(String.Format("Se ha intentado {0} la venta, pero la correspondiente sesión {1} ya está cerrada, se lanza SesionCerradaException.", action, sesion.SesionId)); 
+                throw new SesionExceptionCerrada(sesion.SesionId);
             }
             return true;
         }

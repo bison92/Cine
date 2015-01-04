@@ -8,8 +8,10 @@ namespace Cine
     public class SesionService : ISesionService
     {
         public ISesionRepository _sesionRepository;
-        public SesionService(ISesionRepository sesionRepository)
+        private ISalaService _salaService;
+        public SesionService(ISesionRepository sesionRepository, ISalaService salaService)
         {
+            _salaService = salaService;
             _sesionRepository = sesionRepository;
         }
 
@@ -20,6 +22,10 @@ namespace Cine
             {
                 Logger.Log(String.Format("Se ha intentado leer una sesion con id {0} que no existe, se lanza SesionException.", id));
                 throw new SesionException(id);
+            }
+            if (sesion.Sala == null)
+            {
+                sesion.Sala = _salaService.Read(sesion.SalaId);
             }
             return sesion;
         }

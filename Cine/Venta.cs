@@ -8,8 +8,9 @@ namespace Cine
 {
     public class Venta
     {
-        public long Id { get; set; }
+        public long VentaId { get; set; }
         public long SesionId { get; set; }
+        public Sesion sesion { get; set; }
         public int NumeroEntradas { get; set; }
         public double TotalVenta { get; set; }
         public double PrecioEntrada { get; set; }
@@ -17,7 +18,7 @@ namespace Cine
         public double DiferenciaDevolucion { get; set; }
         public Venta(long sesionId, int nEntradas)
         {
-            this.Id = -1;
+            this.VentaId = -1;
             this.SesionId = sesionId;
             this.NumeroEntradas = nEntradas;
             this.TotalVenta = 0;
@@ -27,7 +28,7 @@ namespace Cine
 
         public Venta()
         {
-            this.Id = -1;
+            this.VentaId = -1;
             this.TotalVenta = 0;
             this.AppliedDiscount = 0;
             this.DiferenciaDevolucion = 0;

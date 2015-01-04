@@ -14,7 +14,7 @@ namespace Cine
             IList<Sala> defaultSalas = new List<Sala>();
             for (int i = 0; i < Constantes.Salas.Length; i++)
             {
-                defaultSalas.Add(new Sala() { Id = Constantes.Salas[i], Aforo = Constantes.Aforos[i] });
+                defaultSalas.Add(new Sala() { SalaId = Constantes.Salas[i], Aforo = Constantes.Aforos[i] });
             }
             foreach (Sala sala in defaultSalas)
                 context.Salas.Add(sala);

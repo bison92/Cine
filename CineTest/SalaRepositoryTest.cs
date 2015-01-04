@@ -35,7 +35,7 @@ namespace CineTest
                 Sala sala = sut.Read(Constantes.Salas[i]);
                 Assert.IsNotNull(sala);
                 //id ok.
-                Assert.AreEqual(Constantes.Salas[i], sala.Id);
+                Assert.AreEqual(Constantes.Salas[i], sala.SalaId);
                 //aforo ok.
                 Assert.AreEqual(Constantes.Aforos[i], sala.Aforo);
             }

@@ -36,7 +36,7 @@ namespace CineTest
         public void TestRead()
         {
             mockVentaService.Setup(vService => vService.Read(It.IsAny<long>()))
-                .Returns((long id) => new Venta { Id = id, SesionId = 1, NumeroEntradas = 20 });
+                .Returns((long id) => new Venta { VentaId = id, SesionId = 1, NumeroEntradas = 20 });
             sut.Read(1);
             mockVentaService.Verify(vService => vService.Read(It.IsAny<long>()), Times.Once());
         }
@@ -48,8 +48,8 @@ namespace CineTest
                     () =>
                     {
                         return new Dictionary<long, Venta>() { 
-                            { 1, new Venta { Id = 1, SesionId = 1, NumeroEntradas = 20 } }, 
-                            { 2, new Venta { Id = 1, SesionId = 1, NumeroEntradas = 20 } }
+                            { 1, new Venta { VentaId = 1, SesionId = 1, NumeroEntradas = 20 } }, 
+                            { 2, new Venta { VentaId = 1, SesionId = 1, NumeroEntradas = 20 } }
                         };
                     });
             sut.List();
@@ -60,14 +60,14 @@ namespace CineTest
         {
             mockVentaService.Setup(vService => vService.Update(It.IsAny<Venta>()))
                 .Returns((Venta v) => (v));
-            sut.Update(new Venta { Id = 1, SesionId = 1, NumeroEntradas = 1 });
+            sut.Update(new Venta { VentaId = 1, SesionId = 1, NumeroEntradas = 1 });
             mockVentaService.Verify(vService => vService.Update(It.IsAny<Venta>()), Times.Once());
         }
         [TestMethod]
         public void TestDelete()
         {
             mockVentaService.Setup(vService => vService.Delete(It.IsAny<long>()))
-                .Returns((long id) => (new Venta { Id = id, SesionId = 1, NumeroEntradas = 20 }));
+                .Returns((long id) => (new Venta { VentaId = id, SesionId = 1, NumeroEntradas = 20 }));
             sut.Delete(1);
             mockVentaService.Verify(vService => vService.Delete(It.IsAny<long>()), Times.Once());
         }

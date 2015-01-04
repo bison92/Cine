@@ -12,15 +12,14 @@ namespace CineTest
         private VentaService sut;
         private Mock<IVentaRepository> mockVentaRepository;
         private Mock<ISesionService> mockSesionService;
-        private Mock<ISalaService> mockSalaService;
+        
 
         [TestInitialize]
         public void TestInicializa()
         {
             mockVentaRepository = new Mock<IVentaRepository>();
             mockSesionService = new Mock<ISesionService>();
-            mockSalaService = new Mock<ISalaService>();
-            sut = new VentaService(mockVentaRepository.Object, mockSesionService.Object, mockSalaService.Object);
+            sut = new VentaService(mockVentaRepository.Object, mockSesionService.Object);
 
         }
         #region mockConfigurations
@@ -31,7 +30,7 @@ namespace CineTest
                 .Returns(
                     (Venta v) =>
                     {
-                        v.Id = 1;
+                        v.VentaId = 1;
                         return v;
                     }
                 );
@@ -43,7 +42,7 @@ namespace CineTest
         private void SetupRepoRead()
         {
             mockVentaRepository.Setup(vRepository => vRepository.Read(It.IsAny<long>()))
-                .Returns((long id) => { return new Venta { SesionId = 1, NumeroEntradas = 20, Id = id, AppliedDiscount = 10, PrecioEntrada = 7.0d, DiferenciaDevolucion = 0, TotalVenta = 126.0d }; });
+                .Returns((long id) => { return new Venta { SesionId = 1, NumeroEntradas = 20, VentaId = id, AppliedDiscount = 10, PrecioEntrada = 7.0d, DiferenciaDevolucion = 0, TotalVenta = 126.0d }; });
         }
         private void SetupRepoReadNull()
         {
@@ -79,22 +78,22 @@ namespace CineTest
                         if (caso == -1)
                         {
                             return new Dictionary<long, Venta>(){
-                                {1, new Venta{Id = 1, SesionId = 1, AppliedDiscount = 10, PrecioEntrada = 7, TotalVenta = 126, NumeroEntradas = 20, DiferenciaDevolucion = 0} },
-                                {2, new Venta{Id = 1, SesionId = 2, AppliedDiscount = 10, PrecioEntrada = 7, TotalVenta = 126, NumeroEntradas = 20, DiferenciaDevolucion = 0} },
-                                {3, new Venta{Id = 1, SesionId = 3, AppliedDiscount = 10, PrecioEntrada = 7, TotalVenta = 126, NumeroEntradas = 20, DiferenciaDevolucion = 0} },
-                                {4, new Venta{Id = 1, SesionId = 4, AppliedDiscount = 10, PrecioEntrada = 7, TotalVenta = 126, NumeroEntradas = 20, DiferenciaDevolucion = 0} },
-                                {5, new Venta{Id = 1, SesionId = 5, AppliedDiscount = 10, PrecioEntrada = 7, TotalVenta = 126, NumeroEntradas = 20, DiferenciaDevolucion = 0} },
-                                {6, new Venta{Id = 1, SesionId = 6, AppliedDiscount = 10, PrecioEntrada = 7, TotalVenta = 126, NumeroEntradas = 20, DiferenciaDevolucion = 0} },
-                                {7, new Venta{Id = 1, SesionId = 7, AppliedDiscount = 10, PrecioEntrada = 7, TotalVenta = 126, NumeroEntradas = 20, DiferenciaDevolucion = 0} },
-                                {8, new Venta{Id = 1, SesionId = 8, AppliedDiscount = 10, PrecioEntrada = 7, TotalVenta = 126, NumeroEntradas = 20, DiferenciaDevolucion = 0} },
-                                {9, new Venta{Id = 1, SesionId = 9, AppliedDiscount = 10, PrecioEntrada = 7, TotalVenta = 126, NumeroEntradas = 20, DiferenciaDevolucion = 0} },
+                                {1, new Venta{VentaId = 1, SesionId = 1, AppliedDiscount = 10, PrecioEntrada = 7, TotalVenta = 126, NumeroEntradas = 20, DiferenciaDevolucion = 0} },
+                                {2, new Venta{VentaId = 1, SesionId = 2, AppliedDiscount = 10, PrecioEntrada = 7, TotalVenta = 126, NumeroEntradas = 20, DiferenciaDevolucion = 0} },
+                                {3, new Venta{VentaId = 1, SesionId = 3, AppliedDiscount = 10, PrecioEntrada = 7, TotalVenta = 126, NumeroEntradas = 20, DiferenciaDevolucion = 0} },
+                                {4, new Venta{VentaId = 1, SesionId = 4, AppliedDiscount = 10, PrecioEntrada = 7, TotalVenta = 126, NumeroEntradas = 20, DiferenciaDevolucion = 0} },
+                                {5, new Venta{VentaId = 1, SesionId = 5, AppliedDiscount = 10, PrecioEntrada = 7, TotalVenta = 126, NumeroEntradas = 20, DiferenciaDevolucion = 0} },
+                                {6, new Venta{VentaId = 1, SesionId = 6, AppliedDiscount = 10, PrecioEntrada = 7, TotalVenta = 126, NumeroEntradas = 20, DiferenciaDevolucion = 0} },
+                                {7, new Venta{VentaId = 1, SesionId = 7, AppliedDiscount = 10, PrecioEntrada = 7, TotalVenta = 126, NumeroEntradas = 20, DiferenciaDevolucion = 0} },
+                                {8, new Venta{VentaId = 1, SesionId = 8, AppliedDiscount = 10, PrecioEntrada = 7, TotalVenta = 126, NumeroEntradas = 20, DiferenciaDevolucion = 0} },
+                                {9, new Venta{VentaId = 1, SesionId = 9, AppliedDiscount = 10, PrecioEntrada = 7, TotalVenta = 126, NumeroEntradas = 20, DiferenciaDevolucion = 0} },
                             };
                         }
                         else
                         {
                             return new Dictionary<long, Venta>()
                             {
-                                {caso, new Venta{Id = 1, SesionId = caso, AppliedDiscount = 10, PrecioEntrada = 7, TotalVenta = 126, NumeroEntradas = 20, DiferenciaDevolucion = 0} },
+                                {caso, new Venta{VentaId = 1, SesionId = caso, AppliedDiscount = 10, PrecioEntrada = 7, TotalVenta = 126, NumeroEntradas = 20, DiferenciaDevolucion = 0} },
                             };
                         }
 
@@ -116,7 +115,7 @@ namespace CineTest
         private void SetupRepoDelete()
         {
             mockVentaRepository.Setup(vRepository => vRepository.Delete(It.IsAny<long>()))
-                .Returns((long id) => { return new Venta { SesionId = 1, Id = id, NumeroEntradas = 20 }; });
+                .Returns((long id) => { return new Venta { SesionId = 1, VentaId = id, NumeroEntradas = 20 }; });
         }
         private void VerifyRepoDelete(int times)
         {
@@ -131,6 +130,7 @@ namespace CineTest
                    {
                        Sesion sesion = new Sesion(id, 1, "17:00");
                        sesion.EstaAbierta = abierta;
+                       sesion.Sala = new Sala(1, 100);
                        return sesion;
                    }
                );
@@ -158,67 +158,48 @@ namespace CineTest
         {
             mockSesionService.Verify(sesService => sesService.List(It.IsIn<long>(Constantes.Sesiones)), Times.Exactly(times));
         }
-        //sala service 
-        private void SetupSalaRead()
-        {
-            mockSalaService.Setup(sService => sService.Read(1))
-                .Returns(new Sala(1, 100));
-        }
-        private void VerifySalaRead(int times)
-        {
-            mockSalaService.Verify(sService => sService.Read(1), Times.Exactly(times));
-        }
+       
         #endregion
 
         #region helperTests
         [TestMethod]
         public void TestHaySuficientesButacas()
         {
-            SetupSalaRead();
             SetupRepoList20Spots();
-            bool isEnough = sut.HaySuficientesButacas(new Sesion(1, 1, "17:00"), new Venta(1, 20));
+            bool isEnough = sut.HaySuficientesButacas(new Sesion{SesionId=1, SalaId = 1, Hora= "17:00", Sala = new Sala{SalaId = 1, Aforo=100}}, new Venta(1, 20));
             Assert.IsTrue(isEnough);
-            VerifySalaRead(1);
             VerifyRepoList(1);
         }
         [TestMethod]
         public void TestHaySuficientesButacasNoHay()
         {
-            SetupSalaRead();
             SetupRepoList20Spots();
-            bool isEnough = sut.HaySuficientesButacas(new Sesion(1, 1, "17:00"), new Venta(1, 21));
+            bool isEnough = sut.HaySuficientesButacas(new Sesion { SesionId = 1, SalaId = 1, Hora = "17:00", Sala = new Sala { SalaId = 1, Aforo = 100 } }, new Venta(1, 21));
             Assert.IsFalse(isEnough);
-            VerifySalaRead(1);
             VerifyRepoList(1);
         }
         [TestMethod]
         public void TestHaySuficientesButacasDevolucion()
         {
-            SetupSalaRead();
             SetupRepoList20Spots();
-            bool isEnough = sut.HaySuficientesButacas(new Sesion(1, 1, "17:00"), new Venta(1, 30), new Venta(1, 10));
+            bool isEnough = sut.HaySuficientesButacas(new Sesion { SesionId = 1, SalaId = 1, Hora = "17:00", Sala = new Sala { SalaId = 1, Aforo = 100 } }, new Venta(1, 30), new Venta(1, 10));
             Assert.IsTrue(isEnough);
-            VerifySalaRead(1);
             VerifyRepoList(1);
         }
         [TestMethod]
         public void TestHaySuficientesButacasDevolucionCambioDeSesionCorrecto()
         {
-            SetupSalaRead();
             SetupRepoListFull();
-            bool isEnough = sut.HaySuficientesButacas(new Sesion(1,1,"15:00"), new Venta(1,10), new Venta(2, 20));
+            bool isEnough = sut.HaySuficientesButacas(new Sesion { SesionId = 1, SalaId = 1, Hora = "17:00", Sala = new Sala { SalaId = 1, Aforo = 100 } }, new Venta(1, 10), new Venta(2, 20));
             Assert.IsFalse(isEnough, "No queda espacio en la sala, pero se esta restando de otra sala.");
-            VerifySalaRead(1);
             VerifyRepoList(1);
         }
         [TestMethod]
         public void TestHaySuficientesButacasNoHayDevolucion()
         {
-            SetupSalaRead();
             SetupRepoList20Spots();
-            bool isEnough = sut.HaySuficientesButacas(new Sesion(1, 1, "17:00"), new Venta(1, 31), new Venta(1, 10));
+            bool isEnough = sut.HaySuficientesButacas(new Sesion { SesionId = 1, SalaId = 1, Hora = "17:00", Sala = new Sala { SalaId = 1, Aforo = 100 } }, new Venta(1, 31), new Venta(1, 10));
             Assert.IsFalse(isEnough);
-            VerifySalaRead(1);
             VerifyRepoList(1);
         }
         [TestMethod]
@@ -242,7 +223,7 @@ namespace CineTest
         public void TestCalculaPrecioYDescuentoDiferencia()
         {
             SetupRepoRead();
-            Venta venta = new Venta { Id = 1, SesionId = 1, NumeroEntradas = 4 };
+            Venta venta = new Venta { VentaId = 1, SesionId = 1, NumeroEntradas = 4 };
             Venta antiguaVenta = sut.Read(1);
             venta = sut.CalculaPrecioYDescuento(venta, antiguaVenta);
             Assert.AreEqual(28.0d, venta.TotalVenta, 0.01d);
@@ -253,7 +234,7 @@ namespace CineTest
         public void TestCalculaPrecioYDescuentoDiferenciaConDescuento()
         {
             SetupRepoRead();
-            Venta venta = new Venta { Id = 1, SesionId = 1, NumeroEntradas = 6 };
+            Venta venta = new Venta { VentaId = 1, SesionId = 1, NumeroEntradas = 6 };
             Venta antiguaVenta = sut.Read(1);
             venta = sut.CalculaPrecioYDescuento(venta, antiguaVenta);
             Assert.AreEqual(37.8d, venta.TotalVenta, 0.01d);
@@ -266,7 +247,6 @@ namespace CineTest
         [TestMethod]
         public void TestCreate()
         {
-            SetupSalaRead();
             SetupSesionRead(true);
             SetupRepoCreate();
             SetupRepoList20Spots();
@@ -276,7 +256,6 @@ namespace CineTest
             Assert.AreEqual(0, res.AppliedDiscount);
             Assert.AreEqual(Constantes.TicketPrice, res.PrecioEntrada);
 
-            VerifySalaRead(1);
             VerifySesionRead(1);
             VerifyRepoCreate(1);
             VerifyRepoList(1);
@@ -285,7 +264,6 @@ namespace CineTest
         [TestMethod]
         public void TestCreateConDescuento()
         {
-            SetupSalaRead();
             SetupSesionRead(true);
             SetupRepoCreate();
             SetupRepoList20Spots();
@@ -295,7 +273,6 @@ namespace CineTest
             Assert.AreEqual(10, res.AppliedDiscount);
             Assert.AreEqual(Constantes.TicketPrice, res.PrecioEntrada);
 
-            VerifySalaRead(1);
             VerifySesionRead(1);
             VerifyRepoCreate(1);
             VerifyRepoList(1);
@@ -313,7 +290,6 @@ namespace CineTest
         [ExpectedException(typeof(VentaExceptionNoAforo))]
         public void TestCreateNoHayButacas()
         {
-            SetupSalaRead();
             SetupSesionRead(true);
             SetupRepoListFull();
             sut.Create(new Venta(1, 2));
@@ -325,7 +301,7 @@ namespace CineTest
         public void TestRead()
         {
             mockVentaRepository.Setup(vRepository => vRepository.Read(1))
-                .Returns((long id) => { Venta venta = new Venta(1, 20); venta.Id = id; return venta; });
+                .Returns((long id) => { Venta venta = new Venta(1, 20); venta.VentaId = id; return venta; });
             sut.Read(1);
             mockVentaRepository.Verify(vRepository => vRepository.Read(1), Times.Once());
         }
@@ -353,20 +329,18 @@ namespace CineTest
         [TestMethod]
         public void TestUpdate()
         {
-            SetupSalaRead();
             SetupSesionRead(true);
             SetupRepoList20Spots();
             SetupRepoRead();
             SetupRepoUpdate();
 
             Venta paraActualizar = new Venta(1, 4);
-            paraActualizar.Id = 1;
+            paraActualizar.VentaId = 1;
             Venta res = sut.Update(paraActualizar);
             Assert.AreEqual(28.0d, res.TotalVenta, 0.01d);
             Assert.AreEqual(0, res.AppliedDiscount);
             Assert.AreEqual(-98d, res.DiferenciaDevolucion, 0.001d);
 
-            VerifySalaRead(1);
             VerifySesionRead(1);
             VerifyRepoList(1);
             VerifyRepoRead(1);
@@ -375,20 +349,18 @@ namespace CineTest
         [TestMethod]
         public void TestUpdateConDescuento()
         {
-            SetupSalaRead();
             SetupSesionRead(true);
             SetupRepoList20Spots();
             SetupRepoRead();
             SetupRepoUpdate();
 
             Venta paraActualizar = new Venta(1, 19);
-            paraActualizar.Id = 1;
+            paraActualizar.VentaId = 1;
             Venta res = sut.Update(paraActualizar);
             Assert.AreEqual(119.7d, res.TotalVenta, 0.01d);
             Assert.AreEqual(10, res.AppliedDiscount);
             Assert.AreEqual(-6.3d, res.DiferenciaDevolucion, 0.001d);
 
-            VerifySalaRead(1);
             VerifySesionRead(1);
             VerifyRepoList(1);
             VerifyRepoRead(1);
@@ -401,7 +373,7 @@ namespace CineTest
             SetupRepoReadNull();
 
             Venta paraActualizar = new Venta(1, 20);
-            paraActualizar.Id = 1;
+            paraActualizar.VentaId = 1;
             sut.Update(paraActualizar);
         }
         [TestMethod]
@@ -412,7 +384,7 @@ namespace CineTest
             SetupSesionRead(false);
 
             Venta paraActualizar = new Venta(1, 20);
-            paraActualizar.Id = 1;
+            paraActualizar.VentaId = 1;
             sut.Update(paraActualizar);
 
             VerifyRepoRead(1);
@@ -422,12 +394,11 @@ namespace CineTest
         [ExpectedException(typeof(VentaExceptionNoAforo))]
         public void TestUpdateNoHayButacas()
         {
-            SetupSalaRead();
             SetupSesionRead(true);
             SetupRepoList20Spots();
             SetupRepoRead();
             Venta paraActualizar = new Venta(1, 41);
-            paraActualizar.Id = 1;
+            paraActualizar.VentaId = 1;
             sut.Update(paraActualizar);
         }
         #endregion

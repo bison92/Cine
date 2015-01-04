@@ -43,8 +43,8 @@ namespace CineTest
         public void TestRead()
         {
             Venta cr = sut.Create(new Venta(1, 10)); // unit guarro testing?
-            Venta res = sut.Read(cr.Id);
-            Assert.AreEqual(cr.Id, res.Id);
+            Venta res = sut.Read(cr.VentaId);
+            Assert.AreEqual(cr.VentaId, res.VentaId);
             Assert.AreEqual(10, res.NumeroEntradas);
         }
 
@@ -95,7 +95,7 @@ namespace CineTest
             Venta noVinculado = new Venta(1, 20);
             Venta cr = sut.Create(new Venta(1,20));
             Venta ventaAActualizar = new Venta(1, 10);
-            ventaAActualizar.Id = cr.Id;
+            ventaAActualizar.VentaId = cr.VentaId;
             Venta actualizada = sut.Update(ventaAActualizar);
             Assert.AreEqual(10, actualizada.NumeroEntradas);
             Assert.AreNotEqual(noVinculado.NumeroEntradas, actualizada.NumeroEntradas);
@@ -106,7 +106,7 @@ namespace CineTest
         public void TestUpdateNoExisteVenta()
         {
             Venta ventaAActualizar = new Venta(1, 10);
-            ventaAActualizar.Id = 1;
+            ventaAActualizar.VentaId = 1;
             Venta actualizada = sut.Update(ventaAActualizar);
         }
 
@@ -114,7 +114,7 @@ namespace CineTest
         public void TestDelete()
         {
             Venta cr = sut.Create(new Venta(1, 20));
-            Venta ventaBorrada = sut.Delete(cr.Id);
+            Venta ventaBorrada = sut.Delete(cr.VentaId);
             Assert.AreEqual(cr, ventaBorrada);
             cr = sut.Read(1);
             Assert.IsNull(cr);

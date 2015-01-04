@@ -34,7 +34,7 @@ namespace CineTest
             {
                 Sesion sesion = sut.Read(Constantes.Sesiones[i]);
                 Assert.IsNotNull(sesion);
-                Assert.AreEqual(Constantes.Sesiones[i], sesion.Id);
+                Assert.AreEqual(Constantes.Sesiones[i], sesion.SesionId);
                 Assert.AreEqual(Constantes.Salas[i % Constantes.Salas.Length], sesion.SalaId);
                 Assert.AreEqual(Constantes.Horas[i], sesion.Hora);
             }

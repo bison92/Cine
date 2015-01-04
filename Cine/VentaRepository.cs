@@ -35,20 +35,20 @@ namespace Cine
 
             IEnumerable<KeyValuePair<long, Venta>> subconjunto;
             if (sesionId != -1)
-                subconjunto = Context.Ventas.Where<Venta>(v => v.SesionId == sesionId).ToDictionary<Venta, long>(v => v.Id);
+                subconjunto = Context.Ventas.Where<Venta>(v => v.SesionId == sesionId).ToDictionary<Venta, long>(v => v.VentaId);
             else
-                subconjunto = Context.Ventas.ToDictionary<Venta, long>(v => v.Id);
-            IDictionary<long, Venta> resultado = subconjunto.Select(vkp => vkp.Value).ToDictionary<Venta, long>(vkp => vkp.Id);
+                subconjunto = Context.Ventas.ToDictionary<Venta, long>(v => v.VentaId);
+            IDictionary<long, Venta> resultado = subconjunto.Select(vkp => vkp.Value).ToDictionary<Venta, long>(vkp => vkp.VentaId);
             return resultado;
         }
 
         public Venta Update(Venta venta)
         {
             Venta ventaUpdate = null;
-            ventaUpdate = Context.Ventas.Find(venta.Id);
+            ventaUpdate = Context.Ventas.Find(venta.VentaId);
             if (ventaUpdate == null)
             {
-                Logger.Log(String.Format("Se ha intentado actualizar una venta con id {0} que no existe, se lanza VentaException.", venta.Id));
+                Logger.Log(String.Format("Se ha intentado actualizar una venta con id {0} que no existe, se lanza VentaException.", venta.VentaId));
                 throw new VentaException();
             }
             Context.Entry(ventaUpdate).CurrentValues.SetValues(venta);

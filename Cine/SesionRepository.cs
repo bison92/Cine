@@ -35,10 +35,10 @@ namespace Cine
         {
             IEnumerable<KeyValuePair<long, Sesion>> subconjunto;
             if (idSala != -1)
-                subconjunto = Context.Sesiones.Where<Sesion>((ses) => (ses.SalaId == idSala)).ToDictionary<Sesion, long>(skp => skp.Id);
+                subconjunto = Context.Sesiones.Where<Sesion>((ses) => (ses.SalaId == idSala)).ToDictionary<Sesion, long>(skp => skp.SesionId);
             else
-                subconjunto = Context.Sesiones.ToDictionary<Sesion, long>(skp => skp.Id);
-            IDictionary<long,Sesion> resultado = subconjunto.Select(sKP => sKP.Value).ToDictionary<Sesion,long>(sKP => sKP.Id);
+                subconjunto = Context.Sesiones.ToDictionary<Sesion, long>(skp => skp.SesionId);
+            IDictionary<long,Sesion> resultado = subconjunto.Select(sKP => sKP.Value).ToDictionary<Sesion,long>(sKP => sKP.SesionId);
             return resultado;
         }
 

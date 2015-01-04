@@ -12,21 +12,36 @@ namespace CineTest
     {
         private SesionService sut;
         private Mock<ISesionRepository> _mockSesionRepositorio;
+        private Mock<ISalaService> _mockSalaService;
         [TestInitialize]
         public void TestInicializa()
         {
             _mockSesionRepositorio = new Mock<ISesionRepository>();
-            sut = new SesionService(_mockSesionRepositorio.Object);
+            _mockSalaService = new Mock<ISalaService>();
+            sut = new SesionService(_mockSesionRepositorio.Object, _mockSalaService.Object);
         }
+        //sala service 
+        private void SetupSalaRead()
+        {
+            _mockSalaService.Setup(sService => sService.Read(1))
+                .Returns(new Sala(1, 100));
+        }
+        private void VerifySalaRead(int times)
+        {
+            _mockSalaService.Verify(sService => sService.Read(1), Times.Exactly(times));
+        }
+
         [TestMethod]
         public void TestRead()
         {
+            SetupSalaRead();
             _mockSesionRepositorio.Setup(sRepository => sRepository.Read(It.IsIn<long>(Constantes.Sesiones))).Returns(new Sesion(1, 1, "17:00"));
             for (int i = 0; i < Constantes.Sesiones.Length; i++)
             {
                 sut.Read(Constantes.Sesiones[i]);
             }
             _mockSesionRepositorio.Verify(sRepository => sRepository.Read(It.IsIn<long>(Constantes.Sesiones)), Times.Exactly(Constantes.Sesiones.Length));
+            VerifySalaRead(1);
         }
         [TestMethod]
         public void TestList()
@@ -69,7 +84,7 @@ namespace CineTest
         [TestMethod]
         public void TestAbrir()
         {
-            _mockSesionRepositorio.Setup(sRepository => sRepository.Update(It.IsIn<long>(Constantes.Sesiones), true)).Returns(new Sesion { Id = 1, SalaId = 1, Hora = "17:30", EstaAbierta = true });
+            _mockSesionRepositorio.Setup(sRepository => sRepository.Update(It.IsIn<long>(Constantes.Sesiones), true)).Returns(new Sesion { SesionId = 1, SalaId = 1, Hora = "17:30", EstaAbierta = true });
             sut.Abrir(Constantes.Sesiones[0]);
             _mockSesionRepositorio.Verify(sRepository => sRepository.Update(It.IsIn<long>(Constantes.Sesiones), true), Times.Once());
         }
