@@ -1,4 +1,4 @@
 Cine
 ====
 
-Aplicación con fines educativos
+Cool stuff here
