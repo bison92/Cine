@@ -51,19 +51,19 @@ namespace Cine
 
         public Venta Update(Venta venta)
         {
-            Venta res = null;
+            Venta ventaUpdate = null;
             using (var ctx = new CineDB())
             {
-                res = ctx.Ventas.Find(venta.Id);
-                if (res == null)
+                ventaUpdate = ctx.Ventas.Find(venta.Id);
+                if (ventaUpdate == null)
                 {
                     Logger.Log(String.Format("Se ha intentado actualizar una venta con id {0} que no existe, se lanza VentaException.", venta.Id));
                     throw new VentaException();
                 }
-                res = venta;
+                ctx.Entry(ventaUpdate).CurrentValues.SetValues(venta);
                 ctx.SaveChanges();
             }
-            return res;
+            return ventaUpdate;
         }
 
         public Venta Delete(long id)

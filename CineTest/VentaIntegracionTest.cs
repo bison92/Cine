@@ -5,6 +5,7 @@ using System.Collections.Generic;
 
 namespace CineTest
 {
+    // Tests fallando, no encuentro la forma adecuada de hacer rollback después de cada test, he probado en el initializ y cleanup, pero no funciona, tampoco funcion los using que hay puestos ahora.
     [TestClass]
     public class VentaIntegracionTest
     {

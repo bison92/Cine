@@ -17,10 +17,10 @@ namespace Cine
         private Sesion Create(long id, long salaId, string hora)
         {
             Sesion nuevaSesion = new Sesion(id, salaId, hora);
-            using (var ctx = new CineDB())
+            using (var context = new CineDB())
             {
-                ctx.Sesiones.Add(nuevaSesion);
-                ctx.SaveChanges();
+                context.Sesiones.Add(nuevaSesion);
+                context.SaveChanges();
             }
             return nuevaSesion;
         }
@@ -28,9 +28,9 @@ namespace Cine
         public Sesion Read(long id)
         {
             Sesion resultado = null;
-            using (var ctx = new CineDB())
+            using (var context   = new CineDB())
             {
-                resultado = ctx.Sesiones.Find(id);
+                resultado = context.Sesiones.Find(id);
             }
             return resultado;
         }
@@ -38,12 +38,12 @@ namespace Cine
         public IDictionary<long,Sesion> List(long idSala = -1)
         {
             IEnumerable<KeyValuePair<long, Sesion>> subconjunto;
-            using (var ctx = new CineDB())
+            using (var context = new CineDB())
             {
                 if (idSala != -1)
-                    subconjunto = ctx.Sesiones.Where<Sesion>((ses) => (ses.SalaId == idSala)).ToDictionary<Sesion, long>(skp => skp.Id);
+                    subconjunto = context.Sesiones.Where<Sesion>((ses) => (ses.SalaId == idSala)).ToDictionary<Sesion, long>(skp => skp.Id);
                 else
-                    subconjunto = ctx.Sesiones.ToDictionary<Sesion, long>(skp => skp.Id);
+                    subconjunto = context.Sesiones.ToDictionary<Sesion, long>(skp => skp.Id);
             }
             IDictionary<long,Sesion> resultado = subconjunto.Select(sKP => sKP.Value).ToDictionary<Sesion,long>(sKP => sKP.Id);
             return resultado;
@@ -54,6 +54,9 @@ namespace Cine
             Sesion sesion = null;
             using (var ctx = new CineDB())
             {
+                // provoca un InvalidOperationException en lugar de devolver null.
+                //sesion = ctx.Sesiones.Single(s => s.Id == id);
+                // mejor Find() como en el Read;
                 sesion = ctx.Sesiones.Find(id);
                 if (sesion == null)
                 {

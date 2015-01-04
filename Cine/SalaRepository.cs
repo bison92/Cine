@@ -9,18 +9,6 @@ namespace Cine
         {
            
         }
-        //public static SalaRepository GetInstance()
-        //{
-        //    if (_instance == null)
-        //    {
-        //        _instance = new SalaRepository();
-        //    }
-        //    return _instance;
-        //}
-        //public static void Clean()
-        //{
-        //    _instance = null;
-        //}
         public Sala Read(long id)
         {
             Sala resultado = null;
@@ -30,6 +18,7 @@ namespace Cine
             }
             return resultado;
         }
+        // no usado.
         private Sala Create(long id, int nButacas)
         {
             Sala sala = new Sala(id, nButacas);
