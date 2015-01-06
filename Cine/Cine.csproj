@@ -50,6 +50,7 @@
   <ItemGroup>
     <Compile Include="CineDB.cs" />
     <Compile Include="CineDBInitializer.cs" />
+    <Compile Include="Interfaces\IDevolucionRepository.cs" />
     <Compile Include="Interfaces\ISalaRepository.cs" />
     <Compile Include="Interfaces\ISalaService.cs" />
     <Compile Include="Interfaces\ISesionController.cs" />
