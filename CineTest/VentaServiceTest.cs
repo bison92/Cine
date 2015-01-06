@@ -55,7 +55,7 @@ namespace CineTest
         }
         private void SetupRepoList20Spots()
         {
-            mockVentaRepository.Setup(vRepository => vRepository.List(It.IsAny<long>(), false))
+            mockVentaRepository.Setup(vRepository => vRepository.List(It.IsAny<long>()))
                 .Returns(new Dictionary<long, Venta>(){
                     {1, new Venta(1, 40)},
                     {2, new Venta(1, 40)}
@@ -63,7 +63,7 @@ namespace CineTest
         }
         private void SetupRepoListFull()
         {
-            mockVentaRepository.Setup(vRepository => vRepository.List(It.IsAny<long>(), false))
+            mockVentaRepository.Setup(vRepository => vRepository.List(It.IsAny<long>()))
                 .Returns(new Dictionary<long, Venta>(){
                     {1,new Venta(1,50)},
                     {2,new Venta(1,50)}
@@ -71,29 +71,29 @@ namespace CineTest
         }
         private void SetupRepoListTotales()
         {
-            mockVentaRepository.Setup(vRepository => vRepository.List(It.IsAny<long>(), false))
+            mockVentaRepository.Setup(vRepository => vRepository.List(It.IsAny<long>()))
                 .Returns(
-                    (long caso, bool devuelta) =>
+                    (long caso) =>
                     {
                         if (caso == -1)
                         {
                             return new Dictionary<long, Venta>(){
-                                {1, new Venta{VentaId = 1, SesionId = 1, AppliedDiscount = 10, PrecioEntrada = 7, TotalVenta = 126, NumeroEntradas = 20, DiferenciaDevolucion = 0, Devuelta = false} },
-                                {2, new Venta{VentaId = 1, SesionId = 2, AppliedDiscount = 10, PrecioEntrada = 7, TotalVenta = 126, NumeroEntradas = 20, DiferenciaDevolucion = 0, Devuelta = false} },
-                                {3, new Venta{VentaId = 1, SesionId = 3, AppliedDiscount = 10, PrecioEntrada = 7, TotalVenta = 126, NumeroEntradas = 20, DiferenciaDevolucion = 0, Devuelta = false} },
-                                {4, new Venta{VentaId = 1, SesionId = 4, AppliedDiscount = 10, PrecioEntrada = 7, TotalVenta = 126, NumeroEntradas = 20, DiferenciaDevolucion = 0, Devuelta = false} },
-                                {5, new Venta{VentaId = 1, SesionId = 5, AppliedDiscount = 10, PrecioEntrada = 7, TotalVenta = 126, NumeroEntradas = 20, DiferenciaDevolucion = 0, Devuelta = false} },
-                                {6, new Venta{VentaId = 1, SesionId = 6, AppliedDiscount = 10, PrecioEntrada = 7, TotalVenta = 126, NumeroEntradas = 20, DiferenciaDevolucion = 0, Devuelta = false} },
-                                {7, new Venta{VentaId = 1, SesionId = 7, AppliedDiscount = 10, PrecioEntrada = 7, TotalVenta = 126, NumeroEntradas = 20, DiferenciaDevolucion = 0, Devuelta = false} },
-                                {8, new Venta{VentaId = 1, SesionId = 8, AppliedDiscount = 10, PrecioEntrada = 7, TotalVenta = 126, NumeroEntradas = 20, DiferenciaDevolucion = 0, Devuelta = false} },
-                                {9, new Venta{VentaId = 1, SesionId = 9, AppliedDiscount = 10, PrecioEntrada = 7, TotalVenta = 126, NumeroEntradas = 20, DiferenciaDevolucion = 0, Devuelta = false} },
+                                {1, new Venta{VentaId = 1, SesionId = 1, AppliedDiscount = 10, PrecioEntrada = 7, TotalVenta = 126, NumeroEntradas = 20, DiferenciaDevolucion = 0} },
+                                {2, new Venta{VentaId = 1, SesionId = 2, AppliedDiscount = 10, PrecioEntrada = 7, TotalVenta = 126, NumeroEntradas = 20, DiferenciaDevolucion = 0} },
+                                {3, new Venta{VentaId = 1, SesionId = 3, AppliedDiscount = 10, PrecioEntrada = 7, TotalVenta = 126, NumeroEntradas = 20, DiferenciaDevolucion = 0} },
+                                {4, new Venta{VentaId = 1, SesionId = 4, AppliedDiscount = 10, PrecioEntrada = 7, TotalVenta = 126, NumeroEntradas = 20, DiferenciaDevolucion = 0} },
+                                {5, new Venta{VentaId = 1, SesionId = 5, AppliedDiscount = 10, PrecioEntrada = 7, TotalVenta = 126, NumeroEntradas = 20, DiferenciaDevolucion = 0} },
+                                {6, new Venta{VentaId = 1, SesionId = 6, AppliedDiscount = 10, PrecioEntrada = 7, TotalVenta = 126, NumeroEntradas = 20, DiferenciaDevolucion = 0} },
+                                {7, new Venta{VentaId = 1, SesionId = 7, AppliedDiscount = 10, PrecioEntrada = 7, TotalVenta = 126, NumeroEntradas = 20, DiferenciaDevolucion = 0} },
+                                {8, new Venta{VentaId = 1, SesionId = 8, AppliedDiscount = 10, PrecioEntrada = 7, TotalVenta = 126, NumeroEntradas = 20, DiferenciaDevolucion = 0} },
+                                {9, new Venta{VentaId = 1, SesionId = 9, AppliedDiscount = 10, PrecioEntrada = 7, TotalVenta = 126, NumeroEntradas = 20, DiferenciaDevolucion = 0} },
                             };
                         }
                         else
                         {
                             return new Dictionary<long, Venta>()
                             {
-                                {caso, new Venta{VentaId = 1, SesionId = caso, AppliedDiscount = 10, PrecioEntrada = 7, TotalVenta = 126, NumeroEntradas = 20, DiferenciaDevolucion = 0, Devuelta = false} },
+                                {caso, new Venta{VentaId = 1, SesionId = caso, AppliedDiscount = 10, PrecioEntrada = 7, TotalVenta = 126, NumeroEntradas = 20, DiferenciaDevolucion = 0} },
                             };
                         }
 
@@ -101,7 +101,7 @@ namespace CineTest
         }
         private void VerifyRepoList(int times)
         {
-            mockVentaRepository.Verify(vRepository => vRepository.List(It.IsAny<long>(), false), Times.Exactly(times));
+            mockVentaRepository.Verify(vRepository => vRepository.List(It.IsAny<long>()), Times.Exactly(times));
         }
         private void SetupRepoUpdate()
         {
@@ -433,7 +433,6 @@ namespace CineTest
             sut.Delete(1);
         }
         #endregion
-
         #region TotalizeTests
         [TestMethod]
         public void TestCalCularTotales()

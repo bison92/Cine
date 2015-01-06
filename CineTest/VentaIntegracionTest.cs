@@ -95,6 +95,7 @@ namespace CineTest
             Assert.AreEqual(-35, upd2.DiferenciaDevolucion);
         }
         [TestMethod]
+        [ExpectedException(typeof(VentaException))]
         public void TestDelete()
         {
             sutSesion.Abrir(1);
@@ -107,7 +108,7 @@ namespace CineTest
             IList<Venta> listaDespues = sutVenta.List();
             Assert.AreNotEqual(listaAntes.Count, listaDespues.Count);
             Assert.AreEqual(listaAntes.Count - 1, listaDespues.Count);
-            Assert.IsTrue(deleted.Devuelta);
+            sutVenta.Read(deleted.VentaId);
         }
         [TestMethod]
         [ExpectedException(typeof(SesionExceptionCerrada))]

@@ -20,7 +20,6 @@ namespace Cine
             Venta nueva = new Venta();
             nueva = Context.Ventas.Add(venta);
             Context.SaveChanges();
-
             return nueva;
         }
 
@@ -31,19 +30,15 @@ namespace Cine
             return venta;
         }
 
-        public IDictionary<long,Venta> List(long sesionId = -1, bool devuelta = false)
+        public IDictionary<long,Venta> List(long sesionId = -1)
         {
 
             IEnumerable<KeyValuePair<long, Venta>> subconjunto;
             if (sesionId != -1)
-            {
-                subconjunto = Context.Ventas.Where<Venta>(v => v.SesionId == sesionId && v.Devuelta == devuelta).ToDictionary<Venta, long>(v => v.VentaId);
-            }
+                subconjunto = Context.Ventas.Where<Venta>(v => v.SesionId == sesionId).ToDictionary<Venta, long>(v => v.VentaId);
             else
-            {
-                subconjunto = Context.Ventas.Where<Venta>(v => v.Devuelta == devuelta).ToDictionary<Venta, long>(v => v.VentaId);
-            }
-            IDictionary<long, Venta> resultado = (IDictionary<long, Venta>)subconjunto;
+                subconjunto = Context.Ventas.ToDictionary<Venta, long>(v => v.VentaId);
+            IDictionary<long, Venta> resultado = subconjunto.Select(vkp => vkp.Value).ToDictionary<Venta, long>(vkp => vkp.VentaId);
             return resultado;
         }
 
@@ -68,7 +63,7 @@ namespace Cine
             borrado = Context.Ventas.Find(id);
             if (borrado != null)
             {
-                borrado.Devuelta = true;
+                Context.Ventas.Remove(borrado);
                 Context.SaveChanges();
             }
             return borrado;
