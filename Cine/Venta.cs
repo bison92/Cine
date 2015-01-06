@@ -16,7 +16,6 @@ namespace Cine
         public double PrecioEntrada { get; set; }
         public double AppliedDiscount { get; set; }
         public double DiferenciaDevolucion { get; set; }
-        public bool Devuelta { get; set; }
         public Venta(long sesionId, int nEntradas)
         {
             this.VentaId = -1;
@@ -25,7 +24,6 @@ namespace Cine
             this.TotalVenta = 0;
             this.AppliedDiscount = 0;
             this.DiferenciaDevolucion = 0;
-            this.Devuelta = false;
         }
 
         public Venta()
