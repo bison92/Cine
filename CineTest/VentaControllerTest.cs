@@ -43,7 +43,7 @@ namespace CineTest
         [TestMethod]
         public void TestList()
         {
-            mockVentaService.Setup(vService => vService.List())
+            mockVentaService.Setup(vService => vService.List(false))
                 .Returns(
                     () =>
                     {
@@ -53,7 +53,7 @@ namespace CineTest
                         };
                     });
             sut.List();
-            mockVentaService.Verify(vService => vService.List(), Times.Once());
+            mockVentaService.Verify(vService => vService.List(false), Times.Once());
         }
         [TestMethod]
         public void TestUpdate()

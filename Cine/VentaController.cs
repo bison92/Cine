@@ -31,14 +31,19 @@ namespace Cine
         {
             return _ventaService.Read(id);
         }
-
+        
         public IList<Venta> List()
         {
-            IDictionary<long,Venta> diccionario = _ventaService.List();
-            ICollection<Venta> valores = diccionario.Values;
-            return valores.ToList();
+            IEnumerable<KeyValuePair<long,Venta>> diccionario = _ventaService.List();
+            IList<Venta> resultado = diccionario.Select<KeyValuePair<long,Venta>,Venta>(vkp => vkp.Value).ToList<Venta>();
+            return resultado;
         }
-
+        public IList<Venta> ListDevoluciones()
+        {
+            IEnumerable<KeyValuePair<long, Venta>> diccionario = _ventaService.List(true);
+            IList<Venta> resultado = diccionario.Select<KeyValuePair<long, Venta>, Venta>(vkp => vkp.Value).ToList<Venta>();
+            return resultado;
+        }
         public Venta Update(Venta venta)
         {
             //NMCN

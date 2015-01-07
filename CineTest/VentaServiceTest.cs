@@ -13,7 +13,6 @@ namespace CineTest
         private Mock<IVentaRepository> mockVentaRepository;
         private Mock<ISesionService> mockSesionService;
         
-
         [TestInitialize]
         public void TestInicializa()
         {
@@ -55,7 +54,7 @@ namespace CineTest
         }
         private void SetupRepoList20Spots()
         {
-            mockVentaRepository.Setup(vRepository => vRepository.List(It.IsAny<long>()))
+            mockVentaRepository.Setup(vRepository => vRepository.List(It.IsAny<long>(), false))
                 .Returns(new Dictionary<long, Venta>(){
                     {1, new Venta(1, 40)},
                     {2, new Venta(1, 40)}
@@ -63,7 +62,7 @@ namespace CineTest
         }
         private void SetupRepoListFull()
         {
-            mockVentaRepository.Setup(vRepository => vRepository.List(It.IsAny<long>()))
+            mockVentaRepository.Setup(vRepository => vRepository.List(It.IsAny<long>(), false))
                 .Returns(new Dictionary<long, Venta>(){
                     {1,new Venta(1,50)},
                     {2,new Venta(1,50)}
@@ -71,29 +70,29 @@ namespace CineTest
         }
         private void SetupRepoListTotales()
         {
-            mockVentaRepository.Setup(vRepository => vRepository.List(It.IsAny<long>()))
+            mockVentaRepository.Setup(vRepository => vRepository.List(It.IsAny<long>(), false))
                 .Returns(
-                    (long caso) =>
+                    (long caso, bool devuelta) =>
                     {
                         if (caso == -1)
                         {
                             return new Dictionary<long, Venta>(){
-                                {1, new Venta{VentaId = 1, SesionId = 1, AppliedDiscount = 10, PrecioEntrada = 7, TotalVenta = 126, NumeroEntradas = 20, DiferenciaDevolucion = 0} },
-                                {2, new Venta{VentaId = 1, SesionId = 2, AppliedDiscount = 10, PrecioEntrada = 7, TotalVenta = 126, NumeroEntradas = 20, DiferenciaDevolucion = 0} },
-                                {3, new Venta{VentaId = 1, SesionId = 3, AppliedDiscount = 10, PrecioEntrada = 7, TotalVenta = 126, NumeroEntradas = 20, DiferenciaDevolucion = 0} },
-                                {4, new Venta{VentaId = 1, SesionId = 4, AppliedDiscount = 10, PrecioEntrada = 7, TotalVenta = 126, NumeroEntradas = 20, DiferenciaDevolucion = 0} },
-                                {5, new Venta{VentaId = 1, SesionId = 5, AppliedDiscount = 10, PrecioEntrada = 7, TotalVenta = 126, NumeroEntradas = 20, DiferenciaDevolucion = 0} },
-                                {6, new Venta{VentaId = 1, SesionId = 6, AppliedDiscount = 10, PrecioEntrada = 7, TotalVenta = 126, NumeroEntradas = 20, DiferenciaDevolucion = 0} },
-                                {7, new Venta{VentaId = 1, SesionId = 7, AppliedDiscount = 10, PrecioEntrada = 7, TotalVenta = 126, NumeroEntradas = 20, DiferenciaDevolucion = 0} },
-                                {8, new Venta{VentaId = 1, SesionId = 8, AppliedDiscount = 10, PrecioEntrada = 7, TotalVenta = 126, NumeroEntradas = 20, DiferenciaDevolucion = 0} },
-                                {9, new Venta{VentaId = 1, SesionId = 9, AppliedDiscount = 10, PrecioEntrada = 7, TotalVenta = 126, NumeroEntradas = 20, DiferenciaDevolucion = 0} },
+                                {1, new Venta{VentaId = 1, SesionId = 1, AppliedDiscount = 10, PrecioEntrada = 7, TotalVenta = 126, NumeroEntradas = 20, DiferenciaDevolucion = 0, Devuelta = devuelta} },
+                                {2, new Venta{VentaId = 1, SesionId = 2, AppliedDiscount = 10, PrecioEntrada = 7, TotalVenta = 126, NumeroEntradas = 20, DiferenciaDevolucion = 0, Devuelta = devuelta} },
+                                {3, new Venta{VentaId = 1, SesionId = 3, AppliedDiscount = 10, PrecioEntrada = 7, TotalVenta = 126, NumeroEntradas = 20, DiferenciaDevolucion = 0, Devuelta = devuelta} },
+                                {4, new Venta{VentaId = 1, SesionId = 4, AppliedDiscount = 10, PrecioEntrada = 7, TotalVenta = 126, NumeroEntradas = 20, DiferenciaDevolucion = 0, Devuelta = devuelta} },
+                                {5, new Venta{VentaId = 1, SesionId = 5, AppliedDiscount = 10, PrecioEntrada = 7, TotalVenta = 126, NumeroEntradas = 20, DiferenciaDevolucion = 0, Devuelta = devuelta} },
+                                {6, new Venta{VentaId = 1, SesionId = 6, AppliedDiscount = 10, PrecioEntrada = 7, TotalVenta = 126, NumeroEntradas = 20, DiferenciaDevolucion = 0, Devuelta = devuelta} },
+                                {7, new Venta{VentaId = 1, SesionId = 7, AppliedDiscount = 10, PrecioEntrada = 7, TotalVenta = 126, NumeroEntradas = 20, DiferenciaDevolucion = 0, Devuelta = devuelta} },
+                                {8, new Venta{VentaId = 1, SesionId = 8, AppliedDiscount = 10, PrecioEntrada = 7, TotalVenta = 126, NumeroEntradas = 20, DiferenciaDevolucion = 0, Devuelta = devuelta} },
+                                {9, new Venta{VentaId = 1, SesionId = 9, AppliedDiscount = 10, PrecioEntrada = 7, TotalVenta = 126, NumeroEntradas = 20, DiferenciaDevolucion = 0, Devuelta = devuelta} },
                             };
                         }
                         else
                         {
                             return new Dictionary<long, Venta>()
                             {
-                                {caso, new Venta{VentaId = 1, SesionId = caso, AppliedDiscount = 10, PrecioEntrada = 7, TotalVenta = 126, NumeroEntradas = 20, DiferenciaDevolucion = 0} },
+                                {caso, new Venta{VentaId = 1, SesionId = caso, AppliedDiscount = 10, PrecioEntrada = 7, TotalVenta = 126, NumeroEntradas = 20, DiferenciaDevolucion = 0, Devuelta = devuelta} },
                             };
                         }
 
@@ -101,7 +100,7 @@ namespace CineTest
         }
         private void VerifyRepoList(int times)
         {
-            mockVentaRepository.Verify(vRepository => vRepository.List(It.IsAny<long>()), Times.Exactly(times));
+            mockVentaRepository.Verify(vRepository => vRepository.List(It.IsAny<long>(), false), Times.Exactly(times));
         }
         private void SetupRepoUpdate()
         {

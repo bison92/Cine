@@ -11,6 +11,7 @@ namespace Cine.Interfaces
         Venta Create(Venta venta);
         Venta Read(long id);
         IList<Venta> List();
+        IList<Venta> ListDevoluciones();
         Venta Update(Venta venta);
         Venta Delete(long id);        
         double CalcularTotales();

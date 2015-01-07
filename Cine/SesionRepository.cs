@@ -31,14 +31,13 @@ namespace Cine
             return resultado;
         }
 
-        public IDictionary<long,Sesion> List(long idSala = -1)
+        public IEnumerable<KeyValuePair<long,Sesion>> List(long idSala = -1)
         {
-            IEnumerable<KeyValuePair<long, Sesion>> subconjunto;
+            IEnumerable<KeyValuePair<long, Sesion>> resultado;
             if (idSala != -1)
-                subconjunto = Context.Sesiones.Where<Sesion>((ses) => (ses.SalaId == idSala)).ToDictionary<Sesion, long>(skp => skp.SesionId);
+                resultado = Context.Sesiones.Where<Sesion>((ses) => (ses.SalaId == idSala)).ToDictionary<Sesion, long>(skp => skp.SesionId);
             else
-                subconjunto = Context.Sesiones.ToDictionary<Sesion, long>(skp => skp.SesionId);
-            IDictionary<long,Sesion> resultado = subconjunto.Select(sKP => sKP.Value).ToDictionary<Sesion,long>(sKP => sKP.SesionId);
+                resultado = Context.Sesiones.ToDictionary<Sesion, long>(skp => skp.SesionId);
             return resultado;
         }
 

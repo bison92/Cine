@@ -33,24 +33,24 @@ namespace Cine
             return _ventaRepository.Create(venta);
         }
 
-        public Venta Read(long id)
+        public Venta Read(long ventaId)
         {
-            Venta venta = _ventaRepository.Read(id);
+            Venta venta = _ventaRepository.Read(ventaId);
             CompruebaVentaExiste(venta, "leer"); // throws exception
             return venta;
         }
-        public IDictionary<long, Venta> List()
+        public IEnumerable<KeyValuePair<long, Venta>> List(bool devuelta = false)
         {
-            return _ventaRepository.List();
+            return _ventaRepository.List(-1, devuelta);
         }
 
         public Venta Update(Venta venta)
         {
-            string action = "cambiar";
+            string logAction = "cambiar";
             Venta antiguosDatos = _ventaRepository.Read(venta.VentaId);
-            CompruebaVentaExiste(antiguosDatos, action); // throws exception
+            CompruebaVentaExiste(antiguosDatos, logAction); // throws exception
             Sesion sesion = _sesionService.Read(venta.SesionId);
-            CompruebaSesionAbierta(sesion, action); // throws exception
+            CompruebaSesionAbierta(sesion, logAction); // throws exception
             if (!HaySuficientesButacas(sesion, venta, antiguosDatos))
             {
                 Logger.Log(String.Format("Se ha intentado cambiar {0} por {1} entradas ,"
@@ -61,19 +61,19 @@ namespace Cine
             return _ventaRepository.Update(venta);
         }
 
-        public Venta Delete(long id)
+        public Venta Delete(long ventaId)
         {
             string action = "devolver";
-            Venta venta = _ventaRepository.Read(id);
+            Venta venta = _ventaRepository.Read(ventaId);
             CompruebaVentaExiste(venta, action); // throws exception
             Sesion sesion = _sesionService.Read(venta.SesionId);
             CompruebaSesionAbierta(sesion, action); // throws exception
-            return _ventaRepository.Delete(id);
+            return _ventaRepository.Delete(ventaId);
         }
         public bool HaySuficientesButacas(Sesion sesion, Venta venta, Venta antiguaVenta = null)
         {
             int butacasVendidas = 0;
-            IDictionary<long, Venta> diccionario = _ventaRepository.List(venta.SesionId);
+            IEnumerable<KeyValuePair<long, Venta>> diccionario = _ventaRepository.List(venta.SesionId);
             foreach (var pareja in diccionario)
             {
                 butacasVendidas += pareja.Value.NumeroEntradas;
@@ -112,47 +112,44 @@ namespace Cine
             return venta;
         }
 
-        public double CalcularTotales(long idSesion = -1, long idSala = -1)
+        public double CalcularTotales(long sesionId = -1, long salaId = -1)
         {
             double total = 0;
-            IDictionary<long, Venta> diccionario;
-            if (idSala != -1)
-            {
-                diccionario = new Dictionary<long, Venta>();
-                IDictionary<long, Sesion> sesionesDeLaSala = _sesionService.List(idSala);
-                foreach (var pareja in sesionesDeLaSala)
-                {
-                    IDictionary<long,Venta> parte = _ventaRepository.List(pareja.Value.SesionId);
-                    diccionario = diccionario.Concat(parte).ToDictionary(x => x.Key, x => x.Value);
-                }
-            }
-            else
-            {
-                diccionario = _ventaRepository.List(idSesion);
-            }
+            IEnumerable<KeyValuePair<long, Venta>> diccionario = ListaVentas(salaId, sesionId);
             total = diccionario.Sum<KeyValuePair<long,Venta>>((venta) => (venta.Value.TotalVenta));
             return total;
         }
 
-        public int CalcularEntradas(long idSesion = -1, long idSala = -1)
+        public int CalcularEntradas(long sesionId = -1, long salaId = -1)
         {
             int entradas = 0;
-            IDictionary<long, Venta> diccionario;
-            if (idSala != -1)
+            IEnumerable<KeyValuePair<long, Venta>> diccionario = ListaVentas(salaId, sesionId);
+            entradas = diccionario.Sum<KeyValuePair<long, Venta>>((venta) => (venta.Value.NumeroEntradas));
+            return entradas;
+        }
+        private IEnumerable<KeyValuePair<long, Venta>> ListaVentas(long salaId, long sesionId)
+        {
+            IEnumerable<KeyValuePair<long, Venta>> diccionario;
+            if (salaId != -1)
             {
-                diccionario = new Dictionary<long, Venta>();
-                IDictionary<long, Sesion> sesionesDeLaSala = _sesionService.List(idSala);
-                foreach(var pareja in sesionesDeLaSala){
-                    IDictionary<long, Venta> parte = _ventaRepository.List(pareja.Value.SesionId);
-                    diccionario = diccionario.Concat(parte).ToDictionary(x => x.Key, x => x.Value);
-                }
+                diccionario = this.ListaVentasSala(salaId);
             }
             else
             {
-                diccionario = _ventaRepository.List(idSesion);
+                diccionario = _ventaRepository.List(sesionId);
             }
-            entradas = diccionario.Sum<KeyValuePair<long, Venta>>((venta) => (venta.Value.NumeroEntradas));
-            return entradas;
+            return diccionario;
+        }
+        private IEnumerable<KeyValuePair<long, Venta>> ListaVentasSala(long salaId)
+        {
+            IEnumerable<KeyValuePair<long, Venta>> diccionario = new Dictionary<long,Venta>();
+            IEnumerable<KeyValuePair<long, Sesion>> sesionesDeLaSala = _sesionService.List(salaId);
+            foreach (var pareja in sesionesDeLaSala)
+            {
+                IEnumerable<KeyValuePair<long, Venta>> parte = _ventaRepository.List(pareja.Value.SesionId);
+                diccionario = diccionario.Concat(parte).ToDictionary(x => x.Key, x => x.Value);
+            }
+            return diccionario;
         }
         /// <summary>
         /// Comprueba que la sesión está abierta, lanza una excepción si no es así.

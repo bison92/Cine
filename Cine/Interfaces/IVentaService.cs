@@ -10,7 +10,7 @@ namespace Cine.Interfaces
     {
         Venta Create(Venta venta);
         Venta Read(long id);
-        IDictionary<long,Venta> List();
+        IEnumerable<KeyValuePair<long,Venta>> List(bool devuelta = false);
         Venta Update(Venta venta);
         Venta Delete(long id);
         double CalcularTotales(long idSesion = -1, long idSala = -1);

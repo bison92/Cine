@@ -34,9 +34,9 @@ namespace CineTest
         [TestMethod]
         public void TestCreate()
         {
-            int ventas = sut.List().Count;
+            int ventas = sut.List().Count();
             Venta res = sut.Create(new Venta(1, 10));
-            Assert.AreEqual(ventas+1, sut.List().Count);
+            Assert.AreEqual(ventas+1, sut.List().Count());
         }
 
         [TestMethod]
@@ -60,7 +60,7 @@ namespace CineTest
         {
             sut.Create(new Venta(1, 20));
             sut.Create(new Venta(1, 20));
-            IDictionary<long, Venta> res = sut.List();
+            IDictionary<long, Venta> res = (Dictionary<long,Venta>)sut.List();
             Assert.AreEqual(2, res.Count);
         }
 
@@ -71,7 +71,7 @@ namespace CineTest
             {
                 sut.Create(new Venta(Constantes.Sesiones[i], 10));
                 sut.Create(new Venta(Constantes.Sesiones[i], 10));
-                IDictionary<long, Venta> resSesion = sut.List(Constantes.Sesiones[i]);
+                IDictionary<long, Venta> resSesion = (Dictionary<long,Venta>)sut.List(Constantes.Sesiones[i]);
                 Assert.AreEqual(2, resSesion.Count);
                 foreach (var pareja in resSesion)
                 {
@@ -83,8 +83,8 @@ namespace CineTest
         [TestMethod]
         public void TestListNoHayVentas()
         {
-            IDictionary<long, Venta> res = sut.List();
-            IDictionary<long, Venta> resSesion1 = sut.List(1);
+            IDictionary<long, Venta> res = (Dictionary<long, Venta>)sut.List();
+            IDictionary<long, Venta> resSesion1 = (Dictionary<long, Venta>)sut.List(1);
             Assert.AreEqual(0, res.Count);
             Assert.AreEqual(0, resSesion1.Count);
         }

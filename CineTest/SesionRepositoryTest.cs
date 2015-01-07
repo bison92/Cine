@@ -1,8 +1,9 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Linq;
 using Cine;
-using System.Collections.Generic;
 using System.Data.Entity;
+using System.Collections.Generic;
 
 namespace CineTest
 {
@@ -50,11 +51,11 @@ namespace CineTest
         [TestMethod]
         public void TestList()
         {
-            IDictionary<long,Sesion> sesionesAll = sut.List();
+            Dictionary<long, Sesion> sesionesAll = (Dictionary<long,Sesion>)sut.List();
             Assert.AreEqual(Constantes.Sesiones.Length, sesionesAll.Count);
             foreach (int salaId in Constantes.Salas)
             {
-                IDictionary<long,Sesion> sesiones = sut.List(salaId);
+                Dictionary<long, Sesion> sesiones = (Dictionary<long, Sesion>)sut.List(salaId);
                 Assert.AreEqual(Constantes.SesionesPorSala, sesiones.Count, "Sesiones por sala no coinciden");
                 foreach (var pareja in sesiones)
                 {
@@ -66,7 +67,7 @@ namespace CineTest
         [TestMethod]
         public void TestListNoExisteSala()
         {
-            IDictionary<long,Sesion> sesiones4 = sut.List(Constantes.SalaNoExiste);
+            Dictionary<long,Sesion> sesiones4 = (Dictionary<long,Sesion>)sut.List(Constantes.SalaNoExiste);
             Assert.AreEqual(0, sesiones4.Count);
         }
 

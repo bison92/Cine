@@ -15,8 +15,8 @@ namespace Cine
             Database.SetInitializer<CineDB>(new CineDBInitializer());
         }
 
-        public DbSet<Sala> Salas { get; set; }
-        public DbSet<Sesion> Sesiones { get; set; }
-        public DbSet<Venta> Ventas { get; set; }
+        public virtual DbSet<Sala> Salas { get; set; }
+        public virtual DbSet<Sesion> Sesiones { get; set; }
+        public virtual DbSet<Venta> Ventas { get; set; }
     }
 }

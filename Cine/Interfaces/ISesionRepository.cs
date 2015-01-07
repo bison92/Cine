@@ -9,7 +9,7 @@ namespace Cine.Interfaces
     public interface ISesionRepository
     {
         Sesion Read(long id);
-        IDictionary<long,Sesion> List(long salaId = -1);
+        IEnumerable<KeyValuePair<long,Sesion>> List(long salaId = -1);
         Sesion Update(long id, bool abierta);
     }
 }

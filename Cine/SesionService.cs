@@ -29,7 +29,7 @@ namespace Cine
             }
             return sesion;
         }
-        public IDictionary<long, Sesion> List(long salaId = -1)
+        public IEnumerable<KeyValuePair<long, Sesion>> List(long salaId = -1)
         {
             return _sesionRepository.List(salaId);
         }
